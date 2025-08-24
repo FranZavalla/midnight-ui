@@ -17,6 +17,12 @@ import { Box } from '@mui/material';
 import React, { useState } from 'react';
 import { Button } from './components/Button';
 import { ConnectWallet } from './components/ConnectWallet';
+import { Patient } from './components/Patient';
+
+type Money = number;
+type Condition = boolean;
+type Key = string;
+export type Data = Map<Key, [Money, Condition]>;
 
 /**
  * The root bulletin board application component.
@@ -27,8 +33,16 @@ import { ConnectWallet } from './components/ConnectWallet';
  *
  * @internal
  */
+
+const initData: Data = new Map<Key, [Money, Condition]>([
+  ['alice', [1200, true]],
+  ['bob', [500, false]],
+  ['carol', [3000, true]],
+  ['dave', [50, false]],
+]);
 const App: React.FC = () => {
   const [isDoctor, setIsDoctor] = useState<boolean | undefined>(undefined);
+  const [data, setData] = useState<Data>(initData);
   // const boardApiProvider = useDeployedBoardContext();
   // const [boardDeployments, setBoardDeployments] = useState<Array<Observable<BoardDeployment>>>([]);
 
@@ -49,17 +63,17 @@ const App: React.FC = () => {
   };
 
   if (isDoctor) {
-    return <div>DOGTOR!</div>;
+    return <div>DOGTOR</div>;
   } else if (isDoctor === false) {
-    return <div>NO DOGTOR</div>;
+    return <Patient data={data} setData={setData} />;
   }
 
   return (
     <Box sx={{ background: '#fff', minHeight: '100vh' }}>
       {/* <MainLayout> */}
       <ConnectWallet />
-      <Button onClick={handleDoctorClick}>I'm a doctor</Button>
-      <Button onClick={handlePatientClick}>I'm a patient</Button>
+      <Button onClick={handleDoctorClick}>I&apos;m a doctor</Button>
+      <Button onClick={handlePatientClick}>I&apos;m a patient</Button>
       {/* {boardDeployments.map((boardDeployment, idx) => (
           <div data-testid={`board-${idx}`} key={`board-${idx}`}>
             <Board boardDeployment$={boardDeployment} />

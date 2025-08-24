@@ -6,10 +6,14 @@ export const ConnectWallet = () => {
   return (
     <Button
       onClick={async () => {
-        const midnight = (window as any).midnight;
-        const wallet: DAppConnectorWalletAPI = await midnight?.mnLace?.enable();
-        console.log(await midnight.mnLace.isEnabled());
-        console.log(wallet.state());
+        try {
+          const midnight = window.midnight!;
+          const wallet: DAppConnectorWalletAPI = await midnight?.mnLace?.enable();
+          console.log(await midnight.mnLace.isEnabled());
+          console.log(wallet.state());
+        } catch (error) {
+          console.error(error);
+        }
       }}
     >
       Connect Wallet
