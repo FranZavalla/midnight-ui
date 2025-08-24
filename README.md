@@ -163,6 +163,20 @@ The CLI provides an interactive menu system with the following options:
    7. Claim rewards (if eligible)
    ```
 
+#### CLI Workflow Screenshots
+
+**Initial Setup and Contract Deployment**
+![Initial Setup](1.png)
+*Starting the CLI, building wallet, and deploying a new medical verification contract*
+
+**Verifier Authorization and Beneficiary Management** 
+![Verifier and Beneficiary](2.png)
+*Granting verifier permissions, generating public keys, and adding beneficiaries with medical verification*
+
+**Rewards and Claims Processing**
+![Rewards and Claims](3.png) 
+*Government funding rewards, viewing beneficiary data, and processing reward claims*
+
 ### Key Management and Privacy
 
 #### Key Types
