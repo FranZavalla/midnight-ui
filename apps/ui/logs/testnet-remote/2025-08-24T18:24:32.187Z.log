@@ -1,0 +1,25 @@
+{"level":30,"time":1756059894461,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"File path for save file not found, building wallet from scratch"}
+{"level":30,"time":1756059894518,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Your wallet seed is: 2f616162ada3206cf894f7668a3c35a0e3db7dc126397d098bd25ddb2016c131"}
+{"level":30,"time":1756059894518,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Your wallet address is: mn_shield-addr_test1zudg3evtkertx8x275wcen2mddu3jgt4uu39nx03u9ny4tasfznsxqrneaqunza30aelg7hav5g46c8y20tw7zfl32s8q5z0kndh6uh5fsv5rd3g"}
+{"level":30,"time":1756059894519,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Your wallet balance is: 0"}
+{"level":30,"time":1756059894519,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Waiting to receive tokens..."}
+{"level":30,"time":1756059894522,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Waiting for funds. Backend lag: 0, wallet lag: 0, transactions=0"}
+{"level":30,"time":1756059904731,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Waiting for funds. Backend lag: 0, wallet lag: 176, transactions=28"}
+{"level":30,"time":1756059914756,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Waiting for funds. Backend lag: 0, wallet lag: 0, transactions=42"}
+{"level":30,"time":1756059914756,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Your wallet balance is: 967128908"}
+{"level":30,"time":1756059936580,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Deploying counter contract..."}
+{"level":30,"time":1756059963919,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Deployed contract at address: 02005ebf2672185fd43e0c6b42f1cb4647e1d344f75fcfde39d495a6e1fd83d674ae"}
+{"level":30,"time":1756059968398,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Checking contract ledger state..."}
+{"level":30,"time":1756059969114,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Contract address: 02005ebf2672185fd43e0c6b42f1cb4647e1d344f75fcfde39d495a6e1fd83d674ae"}
+{"level":30,"time":1756059969115,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Beneficiaries map: {}"}
+{"level":30,"time":1756059983630,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Granting verifier..."}
+{"level":30,"time":1756060011201,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Transaction 000000001483dd211947f4f37799a5e3e240bc0a449b3fc6d1bc3d09bdf0a0061b38d33b added in block 1413255"}
+{"level":30,"time":1756060495995,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Displaying own public key..."}
+{"level":30,"time":1756060495995,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Your public key is: 109a371367e9f5d532990485e0a0c4664c8e48712d1fbf6693654656daad657b"}
+{"level":30,"time":1756060510032,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Adding beneficiary..."}
+{"level":30,"time":1756060539567,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Transaction 000000003bbd587bca0bbc0526e646b0eb9b47071b1420e475fce411e94d6ed4e98499ac added in block 1413341"}
+{"level":30,"time":1756060587361,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Adding rewards..."}
+{"level":30,"time":1756060623442,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Transaction 00000000ea1f6beab7853fd7f4bd1e51e6ebc1ff3bff9ffbe62570fbff354d993c955cf0 added in block 1413354"}
+{"level":30,"time":1756060669980,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Displaying beneficiary data..."}
+{"level":50,"time":1756060702324,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Found error 'Do not know how to serialize a BigInt'"}
+{"level":30,"time":1756060702324,"pid":446516,"hostname":"benja-Legion-7-16IRX9","msg":"Exiting..."}

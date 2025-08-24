@@ -8,7 +8,9 @@ export type ImpureCircuits<T> = {
   addBeneficiary(context: __compactRuntime.CircuitContext<T>,
                  beneficiary_0: Uint8Array,
                  data_0: boolean): __compactRuntime.CircuitResults<T, []>;
-  lookupData(context: __compactRuntime.CircuitContext<T>): __compactRuntime.CircuitResults<T, boolean>;
+  lookupData(context: __compactRuntime.CircuitContext<T>): __compactRuntime.CircuitResults<T, { rewards: bigint,
+                                                                                                data: boolean
+                                                                                              }>;
   grantVerifier(context: __compactRuntime.CircuitContext<T>,
                 verifier_0: { bytes: Uint8Array }): __compactRuntime.CircuitResults<T, []>;
   addRewards(context: __compactRuntime.CircuitContext<T>,
@@ -28,7 +30,9 @@ export type Circuits<T> = {
   addBeneficiary(context: __compactRuntime.CircuitContext<T>,
                  beneficiary_0: Uint8Array,
                  data_0: boolean): __compactRuntime.CircuitResults<T, []>;
-  lookupData(context: __compactRuntime.CircuitContext<T>): __compactRuntime.CircuitResults<T, boolean>;
+  lookupData(context: __compactRuntime.CircuitContext<T>): __compactRuntime.CircuitResults<T, { rewards: bigint,
+                                                                                                data: boolean
+                                                                                              }>;
   grantVerifier(context: __compactRuntime.CircuitContext<T>,
                 verifier_0: { bytes: Uint8Array }): __compactRuntime.CircuitResults<T, []>;
   addRewards(context: __compactRuntime.CircuitContext<T>,

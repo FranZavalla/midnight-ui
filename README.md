@@ -1,17 +1,3 @@
-use node 22
-
-1) docker run -p 6300:6300 midnightnetwork/proof-server -- 'midnight-proof-server --network testnet'
-2) nvm use 22
-3) npm i -g http-server
-4) npm install -g pnpm@latest-10
-5) pnpm -w run clean
-6) cd packages/contract
-7) pnpm i
-8) pnpm build
-9) cd ../../apps/ui
-10) pnpm i
-11) pnpm turbo build
-12) pnpm run build:start
 # Medical Verification System
 
 A transparent, secure and privacy-preserving protocol for medical data validation and sharing built on the Midnight Network. This system enables medical verifiers (doctors, medical institutions) to add beneficiaries for government benefits while maintaining data privacy through zero-knowledge proofs.
@@ -26,7 +12,7 @@ The system consists of three main actors:
 ### Key Features
 
 - **Privacy-Preserving**: Uses zero-knowledge proofs to verify medical conditions without exposing sensitive health data
-- **Transparent**: All transactions are recorded on the blockchain for auditability
+- **Transparent**: All goberment expenses and rewards are recorded on-chain, ensuring accountability.
 - **Secure**: Built on Midnight Network's privacy-focused infrastructure
 - **Flexible**: Supports verification of any medical condition that can be validated by healthcare professionals
 
@@ -39,44 +25,71 @@ The project is structured as a monorepo with:
 
 ## Prerequisites
 
-- Node.js >= 18
-- pnpm package manager
-- Compact tooling (for contract compilation)
+- Node.js 22 (use `nvm use 22`)
+- pnpm package manager (install with `npm install -g pnpm@latest-10`)
+- Docker (for proof server)
+- http-server (install with `npm i -g http-server`)
 
-## Installation
+## Setup Instructions
 
+Follow these steps in order:
+
+### 1. Start Proof Server
 ```bash
-# Clone the repository
-git clone <repository-url>
+docker run -p 6300:6300 midnightnetwork/proof-server -- 'midnight-proof-server --network testnet'
+```
+Keep this running in a separate terminal.
+
+### 2. Environment Setup
+```bash
+# Switch to Node.js 22
+nvm use 22
+
+# Install global dependencies
+npm i -g http-server
+npm install -g pnpm@latest-10
+```
+
+### 3. Project Setup
+```bash
+# Clone and navigate to project
+git clone https://github.com/FranZavalla/midnight-ui
 cd midnight-ui
 
-# Install dependencies
-pnpm install
-```
+# Clean any previous builds
+pnpm -w run clean
 
-## Building the Contract
-
-The smart contract is written in Compact language and needs to be compiled before use:
-
-```bash
-# Build the contract
+# Install and build contract
 cd packages/contract
-pnpm run setup
+pnpm i
+pnpm build
+
+# Install and build UI
+cd ../../apps/ui
+pnpm i
+pnpm turbo build
 ```
 
-This will:
-1. Compile the Compact contract (`counter.compact`) 
-2. Generate TypeScript bindings
-3. Create zero-knowledge proof keys and circuits
+### 4. Running the Application
 
-## Building the UI
-
+**For Web Server:**
 ```bash
 cd apps/ui
-pnpm run build
+pnpm run build:start
 ```
 
-This creates a production build of the React application with the contract artifacts included.
+**For CLI Interface:**
+```bash
+cd apps/ui
+pnpm run start-cli
+```
+
+## Important Notes
+
+- The proof server must be running before starting the application
+- All commands should be run in the order specified above
+- The setup process compiles the Compact contract and generates zero-knowledge proof keys and circuits
+- The UI build includes all contract artifacts needed for operation
 
 ## Usage
 
@@ -150,13 +163,27 @@ The CLI provides an interactive menu system with the following options:
    7. Claim rewards (if eligible)
    ```
 
-### Key Management
+### Key Management and Privacy
 
-- **Secret Keys**: 64-character hex strings used for authentication
-- **Public Keys**: Derived from secret keys, used for identification
+#### Key Types
+- **Secret Keys**: 64-character hex strings used for authentication and transaction signing
+- **Legacy Coin Public Key**: Used for verifier authorization - this is displayed when building a wallet and should be used when granting verifier permissions
+- **Public Key (from Secret Key)**: Generated from secret key using option 5 in CLI - used for beneficiary identification and claiming rewards
 - **Contract Address**: Unique identifier for each deployed contract instance
 
-Keep your secret keys secure and never share them publicly.
+#### Privacy Protection
+The system ensures privacy through:
+- **Beneficiary Anonymity**: Only the beneficiary and their verifying doctor know the connection between a public key and the actual person's identity
+- **Zero-Knowledge Verification**: Medical conditions are verified without exposing the actual medical data
+- **Pseudonymous Transactions**: All on-chain interactions use public keys rather than real identities
+
+#### Testing Configuration
+For testing purposes:
+- The **government wallet** that deploys the contract can add itself as a verifier using its legacy coin public key
+- The same wallet can then add beneficiaries (including itself) using the public key derived from its secret key
+- This allows complete end-to-end testing with a single wallet acting as government, verifier, and beneficiary
+
+**Security Note**: Keep your secret keys secure and never share them publicly.
 
 ## Development
 

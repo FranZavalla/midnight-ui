@@ -52,8 +52,8 @@ export circuit addBeneficiary(beneficiary: Bytes<32>, data: Boolean): [] {
    { beneficiaries.insert($beneficiary, UserInfo { rewards: 0, data: $data });}
 }
 
-export circuit lookupData(): Boolean {
-  return beneficiaries.lookup(disclose(publicKey(localSecretKey()))).data;
+export circuit lookupData(): UserInfo {
+  return beneficiaries.lookup(disclose(publicKey(localSecretKey())));
 }
 
 export circuit grantVerifier(verifier: ZswapCoinPublicKey): [] {

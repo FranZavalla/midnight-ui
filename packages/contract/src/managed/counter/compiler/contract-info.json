@@ -30,7 +30,23 @@
       "arguments": [
       ],
       "result-type": {
-        "type-name": "Boolean"
+        "type-name": "Struct",
+        "name": "UserInfo",
+        "elements": [
+          {
+            "name": "rewards",
+            "type": {
+              "type-name": "Uint",
+              "maxval": 340282366920938463463374607431768211455
+            }
+          },
+          {
+            "name": "data",
+            "type": {
+              "type-name": "Boolean"
+            }
+          }
+        ]
       }
     },
     {

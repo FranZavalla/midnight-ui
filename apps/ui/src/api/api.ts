@@ -181,8 +181,11 @@ export const displayBeneficiaryData = async (
 ): Promise<void> => {
   logger.info('Displaying beneficiary data...');
   const beneficiaries = await counterContract.callTx.lookupData();
+  logger.info(JSON.stringify(beneficiaries))
   for (const [beneficiary, data] of Object.entries(beneficiaries)) {
-    logger.info(`Beneficiary: ${beneficiary}, Data: ${JSON.stringify(data)}`);
+    logger.info(
+      `Beneficiary: ${beneficiary}, Data: ${JSON.stringify(data, (_, v) => (typeof v === 'bigint' ? v.toString() : v))}`,
+    );
   }
 };
 

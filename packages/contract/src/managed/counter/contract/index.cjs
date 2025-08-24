@@ -232,7 +232,7 @@ class Contract {
           privateTranscriptOutputs: []
         };
         const result_0 = this._lookupData_0(context, partialProofData);
-        partialProofData.output = { value: _descriptor_2.toValue(result_0), alignment: _descriptor_2.alignment() };
+        partialProofData.output = { value: _descriptor_3.toValue(result_0), alignment: _descriptor_3.alignment() };
         return { result: result_0, context: context, proofData: partialProofData };
       },
       grantVerifier: (...args_1) => {
@@ -897,27 +897,26 @@ class Contract {
     return [];
   }
   _lookupData_0(context, partialProofData) {
-    let tmp_0;
-    return (tmp_0 = this._publicKey_0(this._localSecretKey_0(context,
-                                                             partialProofData)),
-            _descriptor_3.fromValue(Contract._query(context,
-                                                    partialProofData,
-                                                    [
-                                                     { dup: { n: 0 } },
-                                                     { idx: { cached: false,
-                                                              pushPath: false,
-                                                              path: [
-                                                                     { tag: 'value',
-                                                                       value: { value: _descriptor_14.toValue(4n),
-                                                                                alignment: _descriptor_14.alignment() } }] } },
-                                                     { idx: { cached: false,
-                                                              pushPath: false,
-                                                              path: [
-                                                                     { tag: 'value',
-                                                                       value: { value: _descriptor_0.toValue(tmp_0),
-                                                                                alignment: _descriptor_0.alignment() } }] } },
-                                                     { popeq: { cached: false,
-                                                                result: undefined } }]).value)).data;
+    const tmp_0 = this._publicKey_0(this._localSecretKey_0(context,
+                                                           partialProofData));
+    return _descriptor_3.fromValue(Contract._query(context,
+                                                   partialProofData,
+                                                   [
+                                                    { dup: { n: 0 } },
+                                                    { idx: { cached: false,
+                                                             pushPath: false,
+                                                             path: [
+                                                                    { tag: 'value',
+                                                                      value: { value: _descriptor_14.toValue(4n),
+                                                                               alignment: _descriptor_14.alignment() } }] } },
+                                                    { idx: { cached: false,
+                                                             pushPath: false,
+                                                             path: [
+                                                                    { tag: 'value',
+                                                                      value: { value: _descriptor_0.toValue(tmp_0),
+                                                                               alignment: _descriptor_0.alignment() } }] } },
+                                                    { popeq: { cached: false,
+                                                               result: undefined } }]).value);
   }
   _grantVerifier_0(context, partialProofData, verifier_0) {
     this._assertOnlyRole_0(context,

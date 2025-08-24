@@ -41,7 +41,7 @@ Which would you like to do? `;
 
 const MAIN_LOOP_QUESTION = `
 You can do one of the following:
-  1. Display current authorized rewards value
+  1. Display current authorized rewards for beneficiaries
   2. Grant verifier
   3. Add beneficiary
   4. Display beneficiary data

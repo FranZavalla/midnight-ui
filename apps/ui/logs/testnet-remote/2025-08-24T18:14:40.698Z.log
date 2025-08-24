@@ -1,0 +1,11 @@
+{"level":30,"time":1756059289831,"pid":429695,"hostname":"benja-Legion-7-16IRX9","msg":"File path for save file not found, building wallet from scratch"}
+{"level":30,"time":1756059289889,"pid":429695,"hostname":"benja-Legion-7-16IRX9","msg":"Your wallet seed is: 2f616162ada3206cf894f7668a3c35a0e3db7dc126397d098bd25ddb2016c131"}
+{"level":30,"time":1756059289889,"pid":429695,"hostname":"benja-Legion-7-16IRX9","msg":"Your wallet address is: mn_shield-addr_test1zudg3evtkertx8x275wcen2mddu3jgt4uu39nx03u9ny4tasfznsxqrneaqunza30aelg7hav5g46c8y20tw7zfl32s8q5z0kndh6uh5fsv5rd3g"}
+{"level":30,"time":1756059289889,"pid":429695,"hostname":"benja-Legion-7-16IRX9","msg":"Your wallet balance is: 0"}
+{"level":30,"time":1756059289890,"pid":429695,"hostname":"benja-Legion-7-16IRX9","msg":"Waiting to receive tokens..."}
+{"level":30,"time":1756059289893,"pid":429695,"hostname":"benja-Legion-7-16IRX9","msg":"Waiting for funds. Backend lag: 0, wallet lag: 0, transactions=0"}
+{"level":30,"time":1756059300939,"pid":429695,"hostname":"benja-Legion-7-16IRX9","msg":"Waiting for funds. Backend lag: 0, wallet lag: 0, transactions=41"}
+{"level":30,"time":1756059300940,"pid":429695,"hostname":"benja-Legion-7-16IRX9","msg":"Your wallet balance is: 968704494"}
+{"level":30,"time":1756059304454,"pid":429695,"hostname":"benja-Legion-7-16IRX9","msg":"Deploying counter contract..."}
+{"level":30,"time":1756059333940,"pid":429695,"hostname":"benja-Legion-7-16IRX9","msg":"Deployed contract at address: 0200fc5b09ca74706bfd7341131b40370c3aa0a212176fffac8ccfcbdb650dcd6a8f"}
+{"level":30,"time":1756059344539,"pid":429695,"hostname":"benja-Legion-7-16IRX9","msg":"Exiting..."}
