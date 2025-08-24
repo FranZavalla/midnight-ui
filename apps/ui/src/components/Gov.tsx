@@ -43,6 +43,15 @@ export const Gov = ({
       return newData;
     });
   };
+
+  const handleAddDoctor = async () => {
+    if (!deployedMedRecordAPI) {
+      console.log('NO API');
+    }
+
+    await deployedMedRecordAPI?.grantVerifier(doctor);
+  };
+
   if (!deployedMedRecordAPI?.deployedContractAddress) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-gray-50 p-4">
@@ -96,7 +105,9 @@ export const Gov = ({
             onChange={(e) => setDoctor(e.target.value)}
             className="mb-2"
           />
-          <Button color="primary">Add doctor</Button>
+          <Button color="primary" onClick={handleAddDoctor}>
+            Add doctor
+          </Button>
         </div>
         <div className="flex flex-col items-center gap-2 p-4 border rounded shadow bg-white w-auto">
           <Input

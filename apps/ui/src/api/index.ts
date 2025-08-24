@@ -1,4 +1,5 @@
 import { type ContractAddress } from '@midnight-ntwrk/compact-runtime';
+import { encodeTokenType, nativeToken } from '@midnight-ntwrk/ledger';
 import { deployContract, findDeployedContract } from '@midnight-ntwrk/midnight-js-contracts';
 import { Counter, CounterPrivateState, witnesses } from 'medical-contract';
 import { type Logger } from 'pino';
@@ -11,7 +12,6 @@ import {
   MedRecordProviders,
   UserInfo,
 } from './common-types.js';
-import { encodeTokenType, nativeToken } from '@midnight-ntwrk/ledger';
 
 export const randomBytes = (length: number): Uint8Array => {
   const bytes = new Uint8Array(length);
@@ -78,12 +78,6 @@ export class MedRecordsAPI implements DeployedMedRecordsAPI {
     }
     return JSON.stringify(beneficiaries);
   }
-  async grantVerifier(address: string) {
-    console.log('Granting verifier...');
-
-    const finalizedTxData = await this.deployedContract.callTx.grantVerifier({ bytes: Buffer.from(address, 'hex') });
-    console.log(`Transaction ${finalizedTxData.public.txId} added in block ${finalizedTxData.public.blockHeight}`);
-  }
 
   async addRewards(rewardsPerBeneficiary: bigint, key: Uint8Array) {
     console.log('Adding rewards...');
@@ -96,6 +90,11 @@ export class MedRecordsAPI implements DeployedMedRecordsAPI {
 
     const finalizedTxData = await this.deployedContract.callTx.addRewards(coinInfo, BigInt(rewardsPerBeneficiary), key);
     console.log(`Transaction ${finalizedTxData.public.txId} added in block ${finalizedTxData.public.blockHeight}`);
+  }
+
+  async grantVerifier(address: string) {
+    const txData = await this.deployedContract.callTx.grantVerifier({ bytes: Buffer.from(address, 'hex') });
+    console.log('grantVerifier txData:', txData);
   }
 
   static async deploy(providers: MedRecordProviders): Promise<MedRecordsAPI> {
