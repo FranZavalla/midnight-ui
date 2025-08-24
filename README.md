@@ -180,7 +180,7 @@ The CLI provides an interactive menu system with the following options:
 ### Key Management and Privacy
 
 #### Key Types
-- **Secret Keys**: 64-character hex strings used for authentication and transaction signing
+- **Secret Keys**: hex strings used for authentication and transaction signing
 - **Legacy Coin Public Key**: Used for verifier authorization - this is displayed when building a wallet and should be used when granting verifier permissions
 - **Public Key (from Secret Key)**: Generated from secret key using option 5 in CLI - used for beneficiary identification and claiming rewards
 - **Contract Address**: Unique identifier for each deployed contract instance
