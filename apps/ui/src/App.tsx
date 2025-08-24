@@ -17,12 +17,14 @@ import { Box } from '@mui/material';
 import React, { useState } from 'react';
 import { Button } from './components/Button';
 import { ConnectWallet } from './components/ConnectWallet';
+import { Doctor } from './components/Doctor';
+import { Gov } from './components/Gov';
 import { Patient } from './components/Patient';
 
 type Money = number;
 type Condition = boolean;
-type Key = string;
-export type Data = Map<Key, [Money, Condition]>;
+type Key = string; // esto cambiará?
+export type ContractData = Map<Key, [Money, Condition]>;
 
 /**
  * The root bulletin board application component.
@@ -34,55 +36,54 @@ export type Data = Map<Key, [Money, Condition]>;
  * @internal
  */
 
-const initData: Data = new Map<Key, [Money, Condition]>([
+const initData: ContractData = new Map<Key, [Money, Condition]>([
   ['alice', [1200, true]],
   ['bob', [500, false]],
   ['carol', [3000, true]],
   ['dave', [50, false]],
 ]);
+
+export enum UserRole {
+  GOV,
+  DOC,
+  PAT,
+}
+
 const App: React.FC = () => {
-  const [isDoctor, setIsDoctor] = useState<boolean | undefined>(undefined);
-  const [data, setData] = useState<Data>(initData);
-  // const boardApiProvider = useDeployedBoardContext();
-  // const [boardDeployments, setBoardDeployments] = useState<Array<Observable<BoardDeployment>>>([]);
+  const [role, setRole] = useState<UserRole | undefined>(undefined);
+  const [data, setData] = useState<ContractData>(initData);
 
-  // useEffect(() => {
-  //   const subscription = boardApiProvider.boardDeployments$.subscribe(setBoardDeployments);
+  const handleGovClick = () => setRole(UserRole.GOV);
+  const handleDoctorClick = () => setRole(UserRole.DOC);
+  const handlePatientClick = () => setRole(UserRole.PAT);
 
-  //   return () => {
-  //     subscription.unsubscribe();
-  //   };
-  // }, [boardApiProvider]);
-
-  const handleDoctorClick = () => {
-    setIsDoctor(true);
-  };
-
-  const handlePatientClick = () => {
-    setIsDoctor(false);
-  };
-
-  if (isDoctor) {
-    return <div>DOGTOR</div>;
-  } else if (isDoctor === false) {
-    return <Patient data={data} setData={setData} />;
+  if (role === UserRole.GOV) {
+    return (
+      <Box sx={{ background: '#fff', minHeight: '100vh' }}>
+        <Gov data={data} setData={setData} setRole={setRole} />
+      </Box>
+    );
+  } else if (role === UserRole.DOC) {
+    return (
+      <Box sx={{ background: '#fff', minHeight: '100vh' }}>
+        <Doctor data={data} setData={setData} setRole={setRole} />
+      </Box>
+    );
+  } else if (role === UserRole.PAT) {
+    return (
+      <Box sx={{ background: '#fff', minHeight: '100vh' }}>
+        <Patient data={data} setData={setData} setRole={setRole} />
+      </Box>
+    );
   }
 
   return (
     <Box sx={{ background: '#fff', minHeight: '100vh' }}>
-      {/* <MainLayout> */}
+      <div className="w-5 h-5 bg-cyan-500" />
       <ConnectWallet />
-      <Button onClick={handleDoctorClick}>I&apos;m a doctor</Button>
-      <Button onClick={handlePatientClick}>I&apos;m a patient</Button>
-      {/* {boardDeployments.map((boardDeployment, idx) => (
-          <div data-testid={`board-${idx}`} key={`board-${idx}`}>
-            <Board boardDeployment$={boardDeployment} />
-          </div>
-        ))}
-        <div data-testid="board-start">
-          <Board />
-        </div> */}
-      {/* </MainLayout> */}
+      <Button onClick={handleGovClick}>I'm a government official</Button>
+      <Button onClick={handleDoctorClick}>I'm a doctor</Button>
+      <Button onClick={handlePatientClick}>I'm a patient</Button>
     </Box>
   );
 };

@@ -1,15 +1,36 @@
 'use client';
-import { useState } from 'react';
-import { Data } from '../App';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { ContractData, UserRole } from '../App';
 import { Button } from './Button';
 import { Input } from './Input';
+import { JoinInstance } from './JoinInstance';
 
-export const Patient = ({ data, setData }: { data: Data; setData: React.Dispatch<React.SetStateAction<Data>> }) => {
+export const Patient = ({
+  data,
+  setData,
+  setRole,
+}: {
+  data: ContractData;
+  setData: Dispatch<SetStateAction<ContractData>>;
+  setRole: Dispatch<SetStateAction<UserRole | undefined>>;
+}) => {
   const [value, setValue] = useState<string>('');
   const [seeState, setSeeState] = useState<boolean>(false);
+  const [contract, setContract] = useState<string>('');
+
+  if (!contract)
+    return (
+      <>
+        <h1>PATIENT</h1>
+        <Button onClick={() => setRole(undefined)}>BACK</Button>
+        <JoinInstance setContract={setContract} />
+      </>
+    );
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center">
+      <h1>PATIENT</h1>
+      <Button onClick={() => setRole(undefined)}>BACK</Button>
       <div>Do your thing</div>
       <Input
         placeholder="Enter your hash"
