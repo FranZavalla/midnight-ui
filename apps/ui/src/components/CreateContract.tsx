@@ -1,12 +1,47 @@
-import { useCallback } from 'react';
+import { DeployedMedRecordsAPI } from '@/api';
+import { MedRecordDeployment } from '@/contexts';
+import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
+import { Observable } from 'rxjs';
 import { useDeployedContractContext } from '../hooks/useDeployedMedRecordContext';
 import { Button } from './Button';
+import { ShowAddress } from './ShowAddress';
 
-export const CreateContract = () => {
+export const CreateContract = ({
+  deployedMedRecordAPI,
+  setDeployedMedRecordAPI,
+}: {
+  deployedMedRecordAPI: DeployedMedRecordsAPI | undefined;
+  setDeployedMedRecordAPI: Dispatch<SetStateAction<DeployedMedRecordsAPI | undefined>>;
+}) => {
   const counterApiProvider = useDeployedContractContext();
   const onCreateContract = useCallback(() => {
     counterApiProvider.resolve();
   }, [counterApiProvider]);
 
-  return <Button onClick={onCreateContract}>CREATE</Button>;
+  const [MedRecordDeployments, setMedRecordDeployments] = useState<Array<Observable<MedRecordDeployment>>>([]);
+
+  useEffect(() => {
+    const subscription = counterApiProvider.medRecordDeployments$.subscribe(setMedRecordDeployments);
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [counterApiProvider]);
+
+  return (
+    <div>
+      <Button onClick={onCreateContract}>CREATE</Button>
+      <div>
+        {MedRecordDeployments.map((deploy, id) => (
+          <div data-testid={`MedRecord-${id}`} key={`MedRecord-${id}`}>
+            <ShowAddress
+              deployedMedRecordAPI={deployedMedRecordAPI}
+              setDeployedMedRecordAPI={setDeployedMedRecordAPI}
+              deploy={deploy}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };

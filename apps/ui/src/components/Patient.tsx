@@ -19,6 +19,7 @@ export const Patient = ({
   const [seeState, setSeeState] = useState<boolean>(false);
   const [contractHash, setContractHash] = useState<string>('');
   const [deployedMedRecordAPI, setDeployedMedRecordAPI] = useState<DeployedMedRecordsAPI>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   if (!deployedMedRecordAPI?.deployedContractAddress)
     return (
@@ -31,8 +32,10 @@ export const Patient = ({
             onChange={(e) => setContractHash(e.target.value)}
             name="hash"
             className="mb-4 mt-4"
+            loading={loading}
           />
           <JoinContract
+            setLoading={setLoading}
             deployedMedRecordAPI={deployedMedRecordAPI}
             setDeployedMedRecordAPI={setDeployedMedRecordAPI}
             hash={contractHash}

@@ -20,6 +20,7 @@ export const Gov = ({
   const [money, setMoney] = useState<number>(0);
   const [patient, setPatient] = useState<string>('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleMoneyChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMoney(Number(e.target.value));
@@ -50,7 +51,10 @@ export const Gov = ({
 
         <div className="flex gap-5 w-full justify-center">
           <div className="flex flex-col items-center justify-center gap-2 p-4 border rounded shadow bg-white w-full max-w-md">
-            <CreateContract />
+            <CreateContract
+              deployedMedRecordAPI={deployedMedRecordAPI}
+              setDeployedMedRecordAPI={setDeployedMedRecordAPI}
+            />
           </div>
 
           <div className="w-full max-w-md">
@@ -60,8 +64,10 @@ export const Gov = ({
               onChange={(e) => setContractHash(e.target.value)}
               name="hash"
               className="mb-4 mt-4"
+              loading={loading}
             />
             <JoinContract
+              setLoading={setLoading}
               deployedMedRecordAPI={deployedMedRecordAPI}
               hash={contractHash}
               setDeployedMedRecordAPI={setDeployedMedRecordAPI}

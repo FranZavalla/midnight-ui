@@ -16,6 +16,7 @@ export const Doctor = ({ setData, setRole }: DoctorProps) => {
   const [textData, setTextData] = useState<boolean>(false);
   const [clientPub, setClientPub] = useState<string>('');
   const [contractHash, setContractHash] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
 
   const randomBytes = (length: number): Uint8Array => {
     const bytes = new Uint8Array(length);
@@ -42,9 +43,11 @@ export const Doctor = ({ setData, setRole }: DoctorProps) => {
             onChange={(e) => setContractHash(e.target.value)}
             name="hash"
             className="mb-4 mt-4"
+            loading={loading}
           />
           <JoinContract
             deployedMedRecordAPI={deployedMedRecordAPI}
+            setLoading={setLoading}
             setDeployedMedRecordAPI={setDeployedMedRecordAPI}
             hash={contractHash}
           />

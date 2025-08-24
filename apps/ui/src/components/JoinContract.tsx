@@ -9,10 +9,12 @@ import { ShowAddress } from './ShowAddress';
 
 export const JoinContract = ({
   hash,
+  setLoading,
   deployedMedRecordAPI,
   setDeployedMedRecordAPI,
 }: {
   hash: string;
+  setLoading: Dispatch<SetStateAction<boolean>>;
   deployedMedRecordAPI: DeployedMedRecordsAPI | undefined;
   setDeployedMedRecordAPI: Dispatch<SetStateAction<DeployedMedRecordsAPI | undefined>>;
 }) => {
@@ -36,7 +38,14 @@ export const JoinContract = ({
 
   return (
     <div>
-      <Button onClick={() => onJoinContract(hash)}>JOIN</Button>
+      <Button
+        onClick={() => {
+          onJoinContract(hash);
+          setLoading(true);
+        }}
+      >
+        JOIN
+      </Button>
       <div>
         {medRecordDeployments.map((deploy, id) => (
           <div data-testid={`rec-${id}`} key={`rec-${id}`}>
