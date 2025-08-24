@@ -104,19 +104,18 @@ export class CounterAPI implements DeployedCounterAPI {
 
     const finalizedTxData = await this.deployedContract.callTx.grantVerifier({ bytes: Buffer.from(address, 'hex') });
     console.log(`Transaction ${finalizedTxData.public.txId} added in block ${finalizedTxData.public.blockHeight}`);
-    return finalizedTxData.public;
   }
 
   async addRewards(coin: CoinInfo, rewardsPerBeneficiary: bigint, key: Uint8Array) {
     console.log('Adding rewards...');
 
-    // const coinInfo = {
-    //   color: encodeTokenType(nativeToken()),
-    //   nonce: randomBytes(32),
-    //   value: rewardsPerBeneficiary,
-    // };
+    const coinInfo = {
+      color: encodeTokenType(nativeToken()),
+      nonce: randomBytes(32),
+      value: rewardsPerBeneficiary,
+    };
 
-    const finalizedTxData = await this.deployedContract.callTx.addRewards(coin, BigInt(rewardsPerBeneficiary), key);
+    const finalizedTxData = await this.deployedContract.callTx.addRewards(coinInfo, BigInt(rewardsPerBeneficiary), key);
     console.log(`Transaction ${finalizedTxData.public.txId} added in block ${finalizedTxData.public.blockHeight}`);
   }
 
@@ -129,6 +128,19 @@ export class CounterAPI implements DeployedCounterAPI {
     console.log('deployedCounterContract-------------', deployecCounterContract);
 
     return new CounterAPI(deployecCounterContract, providers);
+  }
+
+  async claimRewards(coin: CoinInfo, value: bigint) {
+    console.log('Claiming rewards...');
+
+    const coinInfo = {
+      color: encodeTokenType(nativeToken()),
+      nonce: randomBytes(32),
+      value: value,
+    };
+
+    const finalizedTxData = await this.deployedContract.callTx.claimRewards(coinInfo, BigInt(value));
+    console.log(`Transaction ${finalizedTxData.public.txId} added in block ${finalizedTxData.public.blockHeight}`);
   }
 
   static async join(providers: CounterProviders, address: ContractAddress): Promise<CounterAPI> {

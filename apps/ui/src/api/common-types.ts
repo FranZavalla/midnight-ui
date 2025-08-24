@@ -1,6 +1,6 @@
 import type { DeployedContract, FoundContract } from '@midnight-ntwrk/midnight-js-contracts';
 import type { ImpureCircuitId, MidnightProviders } from '@midnight-ntwrk/midnight-js-types';
-import { Counter, type CounterPrivateState } from '@midnight-ntwrk/counter-contract';
+import { Counter, type CounterPrivateState } from 'medical-contract';
 
 export const counterPrivateStateKey = 'counterPrivateState';
 export type PrivateStateId = typeof counterPrivateStateKey;
