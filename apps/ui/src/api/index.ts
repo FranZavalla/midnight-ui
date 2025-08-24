@@ -11,6 +11,7 @@ import {
   MedRecordProviders,
   UserInfo,
 } from './common-types.js';
+import { encodeTokenType, nativeToken } from '@midnight-ntwrk/ledger';
 
 export const randomBytes = (length: number): Uint8Array => {
   const bytes = new Uint8Array(length);
@@ -25,8 +26,8 @@ export interface DeployedMedRecordsAPI {
   readonly deployedContractAddress: ContractAddress;
   readonly state$: Observable<MedRecordDerivedState>;
 
-  increment: () => Promise<void>;
-  increment2: () => Promise<void>;
+  addRewards: (rewardsPerBeneficiary: bigint, key: Uint8Array) => Promise<void>;
+  claimRewards: (value: bigint) => Promise<void>;
   addBeneficiary: (address: Uint8Array, condition: boolean) => Promise<void>;
   lookupData: (key: string) => Promise<string | undefined>;
   grantVerifier: (address: string) => Promise<void>;
@@ -62,19 +63,40 @@ export class MedRecordsAPI implements DeployedMedRecordsAPI {
 
   readonly state$: Observable<MedRecordDerivedState>;
 
-  async increment() {
-    const txData = await this.deployedContract.callTx.increment();
-  }
-  async increment2() {
-    const txData = await this.deployedContract.callTx.increment2();
-  }
   async addBeneficiary(publicKey: Uint8Array, condition: boolean) {
-    const txData = await this.deployedContract.callTx.addBeneficiary(publicKey, condition);
+    console.log('Adding beneficiary...');
+
+    const finalizedTxData = await this.deployedContract.callTx.addBeneficiary(publicKey, condition);
+    console.log(`Transaction ${finalizedTxData.public.txId} added in block ${finalizedTxData.public.blockHeight}`);
   }
-  async lookupData(key: string): Promise<string | undefined> {
-    return key;
+
+  async lookupData(key: string) {
+    console.log('Displaying beneficiary data...');
+    const beneficiaries = await this.deployedContract.callTx.lookupData();
+    for (const [beneficiary, data] of Object.entries(beneficiaries)) {
+      console.log(`Beneficiary: ${beneficiary}, Data: ${JSON.stringify(data)}`);
+    }
+    return JSON.stringify(beneficiaries);
   }
-  async grantVerifier(address: string) {}
+  async grantVerifier(address: string) {
+    console.log('Granting verifier...');
+
+    const finalizedTxData = await this.deployedContract.callTx.grantVerifier({ bytes: Buffer.from(address, 'hex') });
+    console.log(`Transaction ${finalizedTxData.public.txId} added in block ${finalizedTxData.public.blockHeight}`);
+  }
+
+  async addRewards(rewardsPerBeneficiary: bigint, key: Uint8Array) {
+    console.log('Adding rewards...');
+
+    const coinInfo = {
+      color: encodeTokenType(nativeToken()),
+      nonce: randomBytes(32),
+      value: rewardsPerBeneficiary,
+    };
+
+    const finalizedTxData = await this.deployedContract.callTx.addRewards(coinInfo, BigInt(rewardsPerBeneficiary), key);
+    console.log(`Transaction ${finalizedTxData.public.txId} added in block ${finalizedTxData.public.blockHeight}`);
+  }
 
   static async deploy(providers: MedRecordProviders): Promise<MedRecordsAPI> {
     const deployecMedRecordContract = await deployContract<typeof medicalContractInstance>(providers, {
@@ -85,6 +107,19 @@ export class MedRecordsAPI implements DeployedMedRecordsAPI {
     console.log('deployedMedRecordContract-------------', deployecMedRecordContract);
 
     return new MedRecordsAPI(deployecMedRecordContract, providers);
+  }
+
+  async claimRewards(value: bigint) {
+    console.log('Claiming rewards...');
+
+    const coinInfo = {
+      color: encodeTokenType(nativeToken()),
+      nonce: randomBytes(32),
+      value: value,
+    };
+
+    const finalizedTxData = await this.deployedContract.callTx.claimRewards(coinInfo, BigInt(value));
+    console.log(`Transaction ${finalizedTxData.public.txId} added in block ${finalizedTxData.public.blockHeight}`);
   }
 
   static async join(providers: MedRecordProviders, address: ContractAddress): Promise<MedRecordsAPI> {
