@@ -7,14 +7,17 @@ import { Button } from './Button';
 import { ShowAddress } from './ShowAddress';
 
 export const CreateContract = ({
+  setLoading,
   deployedMedRecordAPI,
   setDeployedMedRecordAPI,
 }: {
+  setLoading: Dispatch<SetStateAction<boolean>>;
   deployedMedRecordAPI: DeployedMedRecordsAPI | undefined;
   setDeployedMedRecordAPI: Dispatch<SetStateAction<DeployedMedRecordsAPI | undefined>>;
 }) => {
   const counterApiProvider = useDeployedContractContext();
   const onCreateContract = useCallback(() => {
+    setLoading(true);
     counterApiProvider.resolve();
   }, [counterApiProvider]);
 

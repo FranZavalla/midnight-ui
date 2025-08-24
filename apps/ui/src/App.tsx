@@ -11,13 +11,6 @@ type Condition = boolean;
 type Key = string;
 export type ContractData = Map<Key, [Money, Condition]>;
 
-const initData: ContractData = new Map<Key, [Money, Condition]>([
-  ['alice', [1200, true]],
-  ['bob', [500, false]],
-  ['carol', [3000, true]],
-  ['dave', [50, false]],
-]);
-
 export enum UserRole {
   GOV,
   DOC,
@@ -26,7 +19,6 @@ export enum UserRole {
 
 const App: React.FC = () => {
   const [role, setRole] = useState<UserRole | undefined>(undefined);
-  const [data, setData] = useState<ContractData>(initData);
   const [wallet, setWallet] = useState<DAppConnectorWalletAPI | undefined>(undefined);
   const [hover, setHover] = useState<UserRole | undefined>(undefined);
 
@@ -36,9 +28,9 @@ const App: React.FC = () => {
 
   return (
     <>
-      {role === UserRole.GOV && <Gov setData={setData} setRole={setRole} />}
-      {role === UserRole.DOC && <Doctor data={data} setData={setData} setRole={setRole} />}
-      {role === UserRole.PAT && <Patient data={data} setData={setData} setRole={setRole} />}
+      {role === UserRole.GOV && <Gov setRole={setRole} />}
+      {role === UserRole.DOC && <Doctor setRole={setRole} />}
+      {role === UserRole.PAT && <Patient setRole={setRole} wallet={wallet!} />}
       {role === undefined && (
         <div className="h-screen text-center flex flex-col items-center justify-center gap-10">
           <div className="flex flex-col gap-0">

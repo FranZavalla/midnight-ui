@@ -212,7 +212,7 @@ export class BrowserDeployedMedRecordManager implements DeployedContractAPIProvi
 }
 
 /** @internal */
-const initializeProviders = async (): Promise<MedRecordProviders> => {
+export const initializeProviders = async (): Promise<MedRecordProviders> => {
   const { wallet, uris } = await connectToWallet();
   const walletState = await wallet.state();
   const zkConfigPath = window.location.origin;
