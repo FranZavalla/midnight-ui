@@ -16,8 +16,8 @@
     }
   },
   "scripts": {
-    "build": "rm -rf dist && pnpm run compact && tsc --project tsconfig.build.json && cp -r ./src/managed ./dist/managed && cp ./src/bboard.compact ./dist",
-    "compact": "compact compile src/counter.compact ./src/managed/bboard",
+    "build": "rm -rf dist && pnpm run compact && tsc --project tsconfig.build.json && cp -r ./src/managed ./dist/managed && cp ./src/counter.compact ./dist",
+    "compact": "compact compile src/counter.compact ./src/managed/counter",
     "lint": "eslint src",
     "setup": "pnpm run compact && pnpm run build"
   },

@@ -1,20 +1,23 @@
 import type * as __compactRuntime from '@midnight-ntwrk/compact-runtime';
 
-export type UserInfo = { rewards: bigint; data: boolean };
-
 export type Witnesses<T> = {
   localSecretKey(context: __compactRuntime.WitnessContext<Ledger, T>): [T, Uint8Array];
 }
 
 export type ImpureCircuits<T> = {
-  increment(context: __compactRuntime.CircuitContext<T>): __compactRuntime.CircuitResults<T, []>;
-  increment2(context: __compactRuntime.CircuitContext<T>): __compactRuntime.CircuitResults<T, []>;
   addBeneficiary(context: __compactRuntime.CircuitContext<T>,
                  beneficiary_0: Uint8Array,
                  data_0: boolean): __compactRuntime.CircuitResults<T, []>;
   lookupData(context: __compactRuntime.CircuitContext<T>): __compactRuntime.CircuitResults<T, boolean>;
   grantVerifier(context: __compactRuntime.CircuitContext<T>,
                 verifier_0: { bytes: Uint8Array }): __compactRuntime.CircuitResults<T, []>;
+  addRewards(context: __compactRuntime.CircuitContext<T>,
+             coin_0: { nonce: Uint8Array, color: Uint8Array, value: bigint },
+             rewardsPerBeneficiary_0: bigint,
+             key_0: Uint8Array): __compactRuntime.CircuitResults<T, []>;
+  claimRewards(context: __compactRuntime.CircuitContext<T>,
+               coin_0: { nonce: Uint8Array, color: Uint8Array, value: bigint },
+               value_0: bigint): __compactRuntime.CircuitResults<T, []>;
 }
 
 export type PureCircuits = {
@@ -22,14 +25,19 @@ export type PureCircuits = {
 }
 
 export type Circuits<T> = {
-  increment(context: __compactRuntime.CircuitContext<T>): __compactRuntime.CircuitResults<T, []>;
-  increment2(context: __compactRuntime.CircuitContext<T>): __compactRuntime.CircuitResults<T, []>;
   addBeneficiary(context: __compactRuntime.CircuitContext<T>,
                  beneficiary_0: Uint8Array,
                  data_0: boolean): __compactRuntime.CircuitResults<T, []>;
   lookupData(context: __compactRuntime.CircuitContext<T>): __compactRuntime.CircuitResults<T, boolean>;
   grantVerifier(context: __compactRuntime.CircuitContext<T>,
                 verifier_0: { bytes: Uint8Array }): __compactRuntime.CircuitResults<T, []>;
+  addRewards(context: __compactRuntime.CircuitContext<T>,
+             coin_0: { nonce: Uint8Array, color: Uint8Array, value: bigint },
+             rewardsPerBeneficiary_0: bigint,
+             key_0: Uint8Array): __compactRuntime.CircuitResults<T, []>;
+  claimRewards(context: __compactRuntime.CircuitContext<T>,
+               coin_0: { nonce: Uint8Array, color: Uint8Array, value: bigint },
+               value_0: bigint): __compactRuntime.CircuitResults<T, []>;
   publicKey(context: __compactRuntime.CircuitContext<T>, sk_0: Uint8Array): __compactRuntime.CircuitResults<T, Uint8Array>;
 }
 
@@ -39,10 +47,21 @@ export type Ledger = {
     isEmpty(): boolean;
     size(): bigint;
     member(key_0: Uint8Array): boolean;
-    lookup(key_0: Uint8Array): UserInfo;
-    [Symbol.iterator](): Iterator<[Uint8Array, UserInfo]>
+    lookup(key_0: Uint8Array): { rewards: bigint, data: boolean };
+    [Symbol.iterator](): Iterator<[Uint8Array, { rewards: bigint, data: boolean }]>
   };
-  readonly round: bigint;
+  readonly counter: bigint;
+  protocolTVL: {
+    isEmpty(): boolean;
+    size(): bigint;
+    member(key_0: Uint8Array): boolean;
+    lookup(key_0: Uint8Array): { nonce: Uint8Array,
+                                 color: Uint8Array,
+                                 value: bigint,
+                                 mt_index: bigint
+                               };
+    [Symbol.iterator](): Iterator<[Uint8Array, { nonce: Uint8Array, color: Uint8Array, value: bigint, mt_index: bigint }]>
+  };
 }
 
 export type ContractReferenceLocations = any;

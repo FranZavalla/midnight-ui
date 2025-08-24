@@ -11,6 +11,8 @@ import {
   DeployedCounterContract,
   UserInfo,
 } from './common-types.js';
+import { CoinInfo } from '@midnight-ntwrk/zswap';
+import { encodeTokenType, nativeToken } from '@midnight-ntwrk/ledger';
 
 export const randomBytes = (length: number): Uint8Array => {
   const bytes = new Uint8Array(length);
@@ -28,8 +30,8 @@ export interface DeployedCounterAPI {
   readonly deployedContractAddress: ContractAddress;
   readonly state$: Observable<CounterDerivedState>;
 
-  increment: () => Promise<void>;
-  increment2: () => Promise<void>;
+  addRewards: (coin: CoinInfo, rewardsPerBeneficiary: bigint, key: Uint8Array) => Promise<void>;
+  claimRewards: (coin: CoinInfo, value: bigint) => Promise<void>;
   addBeneficiary: (address: Uint8Array, condition: boolean) => Promise<void>;
   lookupData: (key: string) => Promise<string | undefined>;
   grantVerifier: (address: string) => Promise<void>;
@@ -82,19 +84,41 @@ export class CounterAPI implements DeployedCounterAPI {
 
   readonly state$: Observable<CounterDerivedState>;
 
-  async increment() {
-    const txData = await this.deployedContract.callTx.increment();
-  }
-  async increment2() {
-    const txData = await this.deployedContract.callTx.increment2();
-  }
   async addBeneficiary(publicKey: Uint8Array, condition: boolean) {
-    const txData = await this.deployedContract.callTx.addBeneficiary(publicKey, condition);
+    console.log('Adding beneficiary...');
+
+    const finalizedTxData = await this.deployedContract.callTx.addBeneficiary(publicKey, condition);
+    console.log(`Transaction ${finalizedTxData.public.txId} added in block ${finalizedTxData.public.blockHeight}`);
   }
-  async lookupData(key: string): Promise<string | undefined> {
-    return key;
+
+  async lookupData(key: string) {
+    console.log('Displaying beneficiary data...');
+    const beneficiaries = await this.deployedContract.callTx.lookupData();
+    for (const [beneficiary, data] of Object.entries(beneficiaries)) {
+      console.log(`Beneficiary: ${beneficiary}, Data: ${JSON.stringify(data)}`);
+    }
+    return JSON.stringify(beneficiaries);
   }
-  async grantVerifier(address: string) {}
+  async grantVerifier(address: string) {
+    console.log('Granting verifier...');
+
+    const finalizedTxData = await this.deployedContract.callTx.grantVerifier({ bytes: Buffer.from(address, 'hex') });
+    console.log(`Transaction ${finalizedTxData.public.txId} added in block ${finalizedTxData.public.blockHeight}`);
+    return finalizedTxData.public;
+  }
+
+  async addRewards(coin: CoinInfo, rewardsPerBeneficiary: bigint, key: Uint8Array) {
+    console.log('Adding rewards...');
+
+    // const coinInfo = {
+    //   color: encodeTokenType(nativeToken()),
+    //   nonce: randomBytes(32),
+    //   value: rewardsPerBeneficiary,
+    // };
+
+    const finalizedTxData = await this.deployedContract.callTx.addRewards(coin, BigInt(rewardsPerBeneficiary), key);
+    console.log(`Transaction ${finalizedTxData.public.txId} added in block ${finalizedTxData.public.blockHeight}`);
+  }
 
   static async deploy(providers: CounterProviders): Promise<CounterAPI> {
     const deployecCounterContract = await deployContract<typeof medicalContractInstance>(providers, {
