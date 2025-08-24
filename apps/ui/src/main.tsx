@@ -27,6 +27,7 @@ import * as pino from 'pino';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import { DeployedBoardProvider } from './contexts';
 import './index.css';
 
 const networkId = import.meta.env.VITE_NETWORK_ID as NetworkId;
@@ -42,7 +43,9 @@ const rootElement = document.getElementById('root');
 if (rootElement) {
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
-      <App />
+      <DeployedBoardProvider>
+        <App />
+      </DeployedBoardProvider>
     </React.StrictMode>,
   );
 } else {

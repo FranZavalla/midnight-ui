@@ -14,7 +14,7 @@
 // limitations under the License.
 
 import { useContext } from 'react';
-import { DeployedBoardContext, type DeployedBoardAPIProvider } from '../contexts';
+import { DeployedBoardContext, type DeployedContractAPIProvider } from '../contexts';
 
 /**
  * Retrieves the currently in-scope deployed boards provider.
@@ -23,7 +23,7 @@ import { DeployedBoardContext, type DeployedBoardAPIProvider } from '../contexts
  *
  * @internal
  */
-export const useDeployedBoardContext = (): DeployedBoardAPIProvider => {
+export const useDeployedContractContext = (): DeployedContractAPIProvider => {
   const context = useContext(DeployedBoardContext);
 
   if (!context) {

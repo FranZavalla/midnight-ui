@@ -10,6 +10,12 @@
       "require": "./dist/api/src/index.js",
       "import": "./dist/api/src/index.js",
       "default": "./dist/api/src/index.js"
+    },
+    "./utils": {
+      "types": "./dist/api/src/utils/index.d.ts",
+      "require": "./dist/api/src/utils/index.js",
+      "import": "./dist/api/src/utils/index.js",
+      "default": "./dist/api/src/utils/index.js"
     }
   },
   "scripts": {
@@ -22,7 +28,7 @@
     "@midnight-ntwrk/midnight-js-contracts": "^2.0.2",
     "@midnight-ntwrk/midnight-js-types": "^2.0.2",
     "@midnight-ntwrk/midnight-js-utils": "^2.0.2",
-    "contract-primitives": "workspace:*",
+    "medical-contract": "workspace:*",
     "pino": "^9.9.0",
     "rxjs": "^7.8.2"
   }
