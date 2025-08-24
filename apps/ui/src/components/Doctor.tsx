@@ -1,8 +1,9 @@
+import { DeployedCounterAPI } from '@/api';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { ContractData, UserRole } from '../App';
 import { Button } from './Button';
 import { Input } from './Input';
-import { JoinInstance } from './JoinInstance';
+import { JoinContract } from './JoinContract';
 
 interface DoctorProps {
   data: ContractData;
@@ -10,10 +11,11 @@ interface DoctorProps {
   setRole: Dispatch<SetStateAction<UserRole | undefined>>;
 }
 
-export const Doctor = ({ data, setData, setRole }: DoctorProps) => {
+export const Doctor = ({ setData, setRole }: DoctorProps) => {
+  const [deployedBoardAPI, setDeployedBoardAPI] = useState<DeployedCounterAPI>();
   const [textData, setTextData] = useState<boolean>(false);
-  const [value, setValue] = useState<string>('');
   const [clientPub, setClientPub] = useState<string>('');
+  const [contractHash, setContractHash] = useState<string>('');
 
   const randomBytes = (length: number): Uint8Array => {
     const bytes = new Uint8Array(length);
@@ -29,13 +31,23 @@ export const Doctor = ({ data, setData, setRole }: DoctorProps) => {
     setData((prev) => prev.set(clientPub, [0, textData]));
   };
 
-  console.log(data);
-  if (!value)
+  if (!deployedBoardAPI?.deployedContractAddress)
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-gray-50 p-4">
         <h1 className="text-4xl font-bold text-green-600">DOCTOR</h1>
         <div className="w-full max-w-md">
-          <JoinInstance setContract={setValue} />
+          <Input
+            placeholder="Enter your gov hash"
+            value={contractHash}
+            onChange={(e) => setContractHash(e.target.value)}
+            name="hash"
+            className="mb-4 mt-4"
+          />
+          <JoinContract
+            deployedBoardAPI={deployedBoardAPI}
+            setDeployedBoardAPI={setDeployedBoardAPI}
+            hash={contractHash}
+          />
         </div>
         <Button color="error" onClick={() => setRole(undefined)}>
           BACK

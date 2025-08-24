@@ -1,7 +1,9 @@
 'use client';
+import { DeployedCounterAPI } from '@/api';
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import { ContractData, UserRole } from '../App';
 import { Button } from './Button';
+import { CreateContract } from './CreateContract';
 import { Input } from './Input';
 import { JoinInstance } from './JoinInstance';
 
@@ -12,6 +14,7 @@ export const Gov = ({
   setData: Dispatch<SetStateAction<ContractData>>;
   setRole: Dispatch<SetStateAction<UserRole | undefined>>;
 }) => {
+  const [deployedBoardAPI, setDeployedBoardAPI] = useState<DeployedCounterAPI>();
   const [value, setValue] = useState<string>('');
   const [doctor, setDoctor] = useState<string>('');
   const [money, setMoney] = useState<number>(0);
@@ -47,8 +50,7 @@ export const Gov = ({
 
         <div className="flex gap-5 w-full justify-center">
           <div className="flex flex-col items-center justify-center gap-2 p-4 border rounded shadow bg-white w-full max-w-md">
-            <Button className="mb-2">CREATE</Button>
-            <div className="text-lg text-gray-700">Address: {value}</div>
+            <CreateContract deployedBoardAPI={deployedBoardAPI} setDeployedBoardAPI={setDeployedBoardAPI} />
           </div>
 
           <JoinInstance setContract={setValue} />
