@@ -21,7 +21,6 @@ import {
 } from '@midnight-ntwrk/dapp-connector-api';
 import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 import { pipe as fnPipe } from 'fp-ts/function';
-import { type Logger } from 'pino';
 import {
   BehaviorSubject,
   type Observable,
@@ -33,7 +32,6 @@ import {
   map,
   of,
   take,
-  tap,
   throwError,
   timeout,
 } from 'rxjs';
@@ -130,7 +128,7 @@ export class BrowserDeployedBoardManager implements DeployedContractAPIProvider 
    *
    * @param logger The `pino` logger to for logging.
    */
-  constructor(private readonly logger: Logger) {
+  constructor() {
     this.#boardDeploymentsSubject = new BehaviorSubject<Array<BehaviorSubject<BoardDeployment>>>([]);
     this.boardDeployments$ = this.#boardDeploymentsSubject;
   }
@@ -172,7 +170,7 @@ export class BrowserDeployedBoardManager implements DeployedContractAPIProvider 
     // 2. Act as a synchronization point if multiple contract deploys or joins run concurrently.
     //    Concurrent calls to `getProviders()` will receive, and ultimately await, the same
     //    `Promise`.
-    return this.#initializedProviders ?? (this.#initializedProviders = initializeProviders(this.logger));
+    return this.#initializedProviders ?? (this.#initializedProviders = initializeProviders());
   }
 
   private async deployDeployment(deployment: BehaviorSubject<BoardDeployment>): Promise<void> {
@@ -214,8 +212,8 @@ export class BrowserDeployedBoardManager implements DeployedContractAPIProvider 
 }
 
 /** @internal */
-const initializeProviders = async (logger: Logger): Promise<CounterProviders> => {
-  const { wallet, uris } = await connectToWallet(logger);
+const initializeProviders = async (): Promise<CounterProviders> => {
+  const { wallet, uris } = await connectToWallet();
   const walletState = await wallet.state();
   const zkConfigPath = window.location.origin; // '../../../contract/src/managed/bboard';
 
@@ -250,51 +248,33 @@ const initializeProviders = async (logger: Logger): Promise<CounterProviders> =>
 };
 
 /** @internal */
-const connectToWallet = (logger: Logger): Promise<{ wallet: DAppConnectorWalletAPI; uris: ServiceUriConfig }> => {
+const connectToWallet = (): Promise<{ wallet: DAppConnectorWalletAPI; uris: ServiceUriConfig }> => {
   const COMPATIBLE_CONNECTOR_API_VERSION = '1.x';
 
   return firstValueFrom(
     fnPipe(
       interval(100),
       map(() => window.midnight?.mnLace),
-      tap((connectorAPI) => {
-        logger.info(connectorAPI, 'Check for wallet connector API');
-      }),
       filter((connectorAPI): connectorAPI is DAppConnectorAPI => !!connectorAPI),
       concatMap((connectorAPI) =>
         semver.satisfies(connectorAPI.apiVersion, COMPATIBLE_CONNECTOR_API_VERSION)
           ? of(connectorAPI)
           : throwError(() => {
-              logger.error(
-                {
-                  expected: COMPATIBLE_CONNECTOR_API_VERSION,
-                  actual: connectorAPI.apiVersion,
-                },
-                'Incompatible version of wallet connector API',
-              );
-
               return new Error(
                 `Incompatible version of Midnight Lace wallet found. Require '${COMPATIBLE_CONNECTOR_API_VERSION}', got '${connectorAPI.apiVersion}'.`,
               );
             }),
       ),
-      tap((connectorAPI) => {
-        logger.info(connectorAPI, 'Compatible wallet connector API found. Connecting.');
-      }),
       take(1),
       timeout({
         first: 1_000,
         with: () =>
           throwError(() => {
-            logger.error('Could not find wallet connector API');
-
             return new Error('Could not find Midnight Lace wallet. Extension installed?');
           }),
       }),
       concatMap(async (connectorAPI) => {
         const isEnabled = await connectorAPI.isEnabled();
-
-        logger.info(isEnabled, 'Wallet connector API enabled status');
 
         return connectorAPI;
       }),
@@ -302,8 +282,6 @@ const connectToWallet = (logger: Logger): Promise<{ wallet: DAppConnectorWalletA
         first: 5_000,
         with: () =>
           throwError(() => {
-            logger.error('Wallet connector API has failed to respond');
-
             return new Error('Midnight Lace wallet has failed to respond. Extension enabled?');
           }),
       }),
@@ -311,15 +289,12 @@ const connectToWallet = (logger: Logger): Promise<{ wallet: DAppConnectorWalletA
       catchError((error, apis) =>
         error
           ? throwError(() => {
-              logger.error('Unable to enable connector API');
               return new Error('Application is not authorized');
             })
           : apis,
       ),
       concatMap(async ({ walletConnectorAPI, connectorAPI }) => {
         const uris = await connectorAPI.serviceUriConfig();
-
-        logger.info('Connected to wallet connector API and retrieved service configuration');
 
         return { wallet: walletConnectorAPI, uris };
       }),

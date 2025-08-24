@@ -1,9 +1,11 @@
 'use client';
-
 import { ContractAddress } from '@midnight-ntwrk/compact-runtime';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { Observable } from 'rxjs';
+import { BoardDeployment } from '../contexts';
 import { useDeployedContractContext } from '../hooks';
 import { Button } from './Button';
+import { Show } from './Show';
 
 export const CreateAlgo = () => {
   const counterApiProvider = useDeployedContractContext();
@@ -13,5 +15,30 @@ export const CreateAlgo = () => {
     [counterApiProvider],
   );
 
-  return <Button onClick={onCreateContract}>CREATE ALGO</Button>;
+  const [boardDeployments, setBoardDeployments] = useState<Array<Observable<BoardDeployment>>>([]);
+
+  useEffect(() => {
+    const subscription = counterApiProvider.boardDeployments$.subscribe(setBoardDeployments);
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [counterApiProvider]);
+
+  useEffect(() => {
+    console.log(boardDeployments);
+  }, [boardDeployments]);
+
+  return (
+    <div>
+      <Button onClick={onCreateContract}>CREATE ALGO</Button>
+      <div>
+        {boardDeployments.map((deploy, id) => (
+          <div data-testid={`board-${id}`} key={`board-${id}`}>
+            <Show deploy={deploy} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
