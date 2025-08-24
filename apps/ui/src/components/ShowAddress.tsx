@@ -1,29 +1,27 @@
-import { CounterDerivedState, DeployedCounterAPI } from '@/api';
-import { BoardDeployment } from '@/contexts';
+import { DeployedMedRecordsAPI, MedRecordDerivedState } from '@/api';
+import { MedRecordDeployment } from '@/contexts';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Observable } from 'rxjs';
 
 export const ShowAddress = ({
   deploy,
-  deployedBoardAPI,
-  setDeployedBoardAPI,
+  setDeployedMedRecordAPI,
 }: {
-  deploy: Observable<BoardDeployment>;
-  deployedBoardAPI: DeployedCounterAPI | undefined;
-  setDeployedBoardAPI: Dispatch<SetStateAction<DeployedCounterAPI | undefined>>;
+  deploy: Observable<MedRecordDeployment>;
+  deployedMedRecordAPI: DeployedMedRecordsAPI | undefined;
+  setDeployedMedRecordAPI: Dispatch<SetStateAction<DeployedMedRecordsAPI | undefined>>;
 }) => {
-  const [boardDeployment, setBoardDeployment] = useState<BoardDeployment>();
-  // const [deployedBoardAPI, setDeployedBoardAPI] = useState<DeployedCounterAPI>();
-  const [errorMessage, setErrorMessage] = useState<string>();
-  const [boardState, setBoardState] = useState<CounterDerivedState>();
-  const [isWorking, setIsWorking] = useState(!!deploy);
+  const [medRecordDeployment, setMedRecordDeployment] = useState<MedRecordDeployment>();
+  const [_, setErrorMessage] = useState<string>();
+  const [__, setMedRecordState] = useState<MedRecordDerivedState>();
+  const [___, setIsWorking] = useState(!!deploy);
 
   useEffect(() => {
     if (!deploy) {
       return;
     }
 
-    const subscription = deploy.subscribe(setBoardDeployment);
+    const subscription = deploy.subscribe(setMedRecordDeployment);
 
     return () => {
       subscription.unsubscribe();
@@ -31,36 +29,33 @@ export const ShowAddress = ({
   }, [deploy]);
 
   useEffect(() => {
-    if (!boardDeployment) {
+    if (!medRecordDeployment) {
       return;
     }
-    if (boardDeployment.status === 'in-progress') {
+    if (medRecordDeployment.status === 'in-progress') {
       return;
     }
 
     setIsWorking(false);
 
-    if (boardDeployment.status === 'failed') {
+    if (medRecordDeployment.status === 'failed') {
       setErrorMessage(
-        boardDeployment.error.message.length ? boardDeployment.error.message : 'Encountered an unexpected error.',
+        medRecordDeployment.error.message.length
+          ? medRecordDeployment.error.message
+          : 'Encountered an unexpected error.',
       );
       return;
     }
 
-    // We need the board API as well as subscribing to its `state$` observable, so that we can invoke
+    // We need the MedRecord API as well as subscribing to its `state$` observable, so that we can invoke
     // the `post` and `takeDown` methods later.
-    setDeployedBoardAPI(boardDeployment.api);
-    const subscription = boardDeployment.api.state$.subscribe(setBoardState);
+    setDeployedMedRecordAPI(medRecordDeployment.api);
+    const subscription = medRecordDeployment.api.state$.subscribe(setMedRecordState);
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [boardDeployment, setIsWorking, setErrorMessage, setDeployedBoardAPI]);
+  }, [medRecordDeployment, setIsWorking, setErrorMessage, setDeployedMedRecordAPI]);
 
-  return (
-    <div>
-      <h2>Address: </h2>
-      {deploy && <div>{deployedBoardAPI?.deployedContractAddress ?? 'loading...'}</div>}
-    </div>
-  );
+  return <div></div>;
 };

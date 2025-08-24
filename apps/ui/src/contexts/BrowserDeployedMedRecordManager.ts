@@ -48,30 +48,27 @@ import {
 } from '@midnight-ntwrk/midnight-js-types';
 import { Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
 import semver from 'semver';
-import { CounterAPI, CounterCircuitKeys, CounterProviders, DeployedCounterAPI } from '../api';
+import { DeployedMedRecordsAPI, MedRecordCircuitKeys, MedRecordProviders, MedRecordsAPI } from '../api';
 
-/**
- * An in-progress bulletin board deployment.
- */
-export interface InProgressBoardDeployment {
+export interface InProgressMedRecordDeployment {
   readonly status: 'in-progress';
 }
 
 /**
- * A deployed bulletin board deployment.
+ * A deployed medical record deployment.
  */
-export interface DeployedBoardDeployment {
+export interface DeployedMedRecordDeployment {
   readonly status: 'deployed';
 
   /**
    */
-  readonly api: DeployedCounterAPI;
+  readonly api: DeployedMedRecordsAPI;
 }
 
 /**
- * A failed bulletin board deployment.
+ * A failed medical record deployment.
  */
-export interface FailedBoardDeployment {
+export interface FailedMedRecordDeployment {
   readonly status: 'failed';
 
   /**
@@ -81,64 +78,67 @@ export interface FailedBoardDeployment {
 }
 
 /**
- * A bulletin board deployment.
+ * A medical record deployment.
  */
-export type BoardDeployment = InProgressBoardDeployment | DeployedBoardDeployment | FailedBoardDeployment;
+export type MedRecordDeployment =
+  | InProgressMedRecordDeployment
+  | DeployedMedRecordDeployment
+  | FailedMedRecordDeployment;
 
 /**
- * Provides access to bulletin board deployments.
+ * Provides access to medical record deployments.
  */
 export interface DeployedContractAPIProvider {
   /**
-   * Gets the observable set of board deployments.
+   * Gets the observable set of medical record deployments.
    *
    * @remarks
-   * This property represents an observable array of {@link BoardDeployment}, each also an
-   * observable. Changes to the array will be emitted as boards are resolved (deployed or joined),
-   * while changes to each underlying board can be observed via each item in the array.
+   * This property represents an observable array of {@link MedRecordDeployment}, each also an
+   * observable. Changes to the array will be emitted as medical records are resolved (deployed or joined),
+   * while changes to each underlying medical record can be observed via each item in the array.
    */
-  readonly boardDeployments$: Observable<Array<Observable<BoardDeployment>>>;
+  readonly medRecordDeployments$: Observable<Array<Observable<MedRecordDeployment>>>;
 
   /**
-   * Joins or deploys a bulletin board contract.
+   * Joins or deploys a medical record contract.
    *
    * @param contractAddress An optional contract address to use when resolving.
-   * @returns An observable board deployment.
+   * @returns An observable medical record deployment.
    *
    * @remarks
-   * For a given `contractAddress`, the method will attempt to find and join the identified bulletin board
+   * For a given `contractAddress`, the method will attempt to find and join the identified medical record
    * contract; otherwise it will attempt to deploy a new one.
    */
-  readonly resolve: (contractAddress?: ContractAddress) => Observable<BoardDeployment>;
+  readonly resolve: (contractAddress?: ContractAddress) => Observable<MedRecordDeployment>;
 }
 
 /**
- * A {@link DeployedContractAPIProvider} that manages bulletin board deployments in a browser setting.
+ * A {@link DeployedContractAPIProvider} that manages medical record deployments in a browser setting.
  *
  * @remarks
- * {@link BrowserDeployedBoardManager} configures and manages a connection to the Midnight Lace
+ * {@link BrowserDeployedMedRecordManager} configures and manages a connection to the Midnight Lace
  * wallet, along with a collection of additional providers that work in a web-browser setting.
  */
-export class BrowserDeployedBoardManager implements DeployedContractAPIProvider {
-  readonly #boardDeploymentsSubject: BehaviorSubject<Array<BehaviorSubject<BoardDeployment>>>;
-  #initializedProviders: Promise<CounterProviders> | undefined;
+export class BrowserDeployedMedRecordManager implements DeployedContractAPIProvider {
+  readonly #medRecordDeploymentsSubject: BehaviorSubject<Array<BehaviorSubject<MedRecordDeployment>>>;
+  #initializedProviders: Promise<MedRecordProviders> | undefined;
 
   /**
-   * Initializes a new {@link BrowserDeployedBoardManager} instance.
+   * Initializes a new {@link BrowserDeployedMedRecordManager} instance.
    *
    * @param logger The `pino` logger to for logging.
    */
   constructor() {
-    this.#boardDeploymentsSubject = new BehaviorSubject<Array<BehaviorSubject<BoardDeployment>>>([]);
-    this.boardDeployments$ = this.#boardDeploymentsSubject;
+    this.#medRecordDeploymentsSubject = new BehaviorSubject<Array<BehaviorSubject<MedRecordDeployment>>>([]);
+    this.medRecordDeployments$ = this.#medRecordDeploymentsSubject;
   }
 
   /** @inheritdoc */
-  readonly boardDeployments$: Observable<Array<Observable<BoardDeployment>>>;
+  readonly medRecordDeployments$: Observable<Array<Observable<MedRecordDeployment>>>;
 
   /** @inheritdoc */
-  resolve(contractAddress?: ContractAddress): Observable<BoardDeployment> {
-    const deployments = this.#boardDeploymentsSubject.value;
+  resolve(contractAddress?: ContractAddress): Observable<MedRecordDeployment> {
+    const deployments = this.#medRecordDeploymentsSubject.value;
     let deployment = deployments.find(
       (deployment) =>
         deployment.value.status === 'deployed' && deployment.value.api.deployedContractAddress === contractAddress,
@@ -148,7 +148,7 @@ export class BrowserDeployedBoardManager implements DeployedContractAPIProvider 
       return deployment;
     }
 
-    deployment = new BehaviorSubject<BoardDeployment>({
+    deployment = new BehaviorSubject<MedRecordDeployment>({
       status: 'in-progress',
     });
 
@@ -158,12 +158,12 @@ export class BrowserDeployedBoardManager implements DeployedContractAPIProvider 
       void this.deployDeployment(deployment);
     }
 
-    this.#boardDeploymentsSubject.next([...deployments, deployment]);
+    this.#medRecordDeploymentsSubject.next([...deployments, deployment]);
 
     return deployment;
   }
 
-  private getProviders(): Promise<CounterProviders> {
+  private getProviders(): Promise<MedRecordProviders> {
     // We use a cached `Promise` to hold the providers. This will:
     //
     // 1. Cache and re-use the providers (including the configured connector API), and
@@ -173,10 +173,10 @@ export class BrowserDeployedBoardManager implements DeployedContractAPIProvider 
     return this.#initializedProviders ?? (this.#initializedProviders = initializeProviders());
   }
 
-  private async deployDeployment(deployment: BehaviorSubject<BoardDeployment>): Promise<void> {
+  private async deployDeployment(deployment: BehaviorSubject<MedRecordDeployment>): Promise<void> {
     try {
       const providers = await this.getProviders();
-      const api = await CounterAPI.deploy(providers);
+      const api = await MedRecordsAPI.deploy(providers);
       console.log('PREVIO A NEXT');
       deployment.next({
         status: 'deployed',
@@ -191,12 +191,12 @@ export class BrowserDeployedBoardManager implements DeployedContractAPIProvider 
   }
 
   private async joinDeployment(
-    deployment: BehaviorSubject<BoardDeployment>,
+    deployment: BehaviorSubject<MedRecordDeployment>,
     contractAddress: ContractAddress,
   ): Promise<void> {
     try {
       const providers = await this.getProviders();
-      const api = await CounterAPI.join(providers, contractAddress);
+      const api = await MedRecordsAPI.join(providers, contractAddress);
 
       deployment.next({
         status: 'deployed',
@@ -212,10 +212,10 @@ export class BrowserDeployedBoardManager implements DeployedContractAPIProvider 
 }
 
 /** @internal */
-const initializeProviders = async (): Promise<CounterProviders> => {
+const initializeProviders = async (): Promise<MedRecordProviders> => {
   const { wallet, uris } = await connectToWallet();
   const walletState = await wallet.state();
-  const zkConfigPath = window.location.origin; // '../../../contract/src/managed/bboard';
+  const zkConfigPath = window.location.origin;
 
   console.log(`Connecting to wallet with network ID: ${getLedgerNetworkId()}`);
 
@@ -223,7 +223,7 @@ const initializeProviders = async (): Promise<CounterProviders> => {
     privateStateProvider: levelPrivateStateProvider({
       privateStateStoreName: 'counterPrivateState',
     }),
-    zkConfigProvider: new FetchZkConfigProvider<CounterCircuitKeys>(zkConfigPath, fetch.bind(window)),
+    zkConfigProvider: new FetchZkConfigProvider<MedRecordCircuitKeys>(zkConfigPath, fetch.bind(window)),
     proofProvider: httpClientProofProvider(uris.proverServerUri),
     publicDataProvider: indexerPublicDataProvider(uris.indexerUri, uris.indexerWsUri),
     walletProvider: {

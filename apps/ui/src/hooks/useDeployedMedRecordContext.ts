@@ -14,20 +14,13 @@
 // limitations under the License.
 
 import { useContext } from 'react';
-import { DeployedBoardContext, type DeployedContractAPIProvider } from '../contexts';
+import { DeployedMedRecordContext, type DeployedContractAPIProvider } from '../contexts';
 
-/**
- * Retrieves the currently in-scope deployed boards provider.
- *
- * @returns The currently in-scope {@link DeployedBBoardAPIProvider} implementation.
- *
- * @internal
- */
 export const useDeployedContractContext = (): DeployedContractAPIProvider => {
-  const context = useContext(DeployedBoardContext);
+  const context = useContext(DeployedMedRecordContext);
 
   if (!context) {
-    throw new Error('A <DeployedBoardProvider /> is required.');
+    throw new Error('A <DeployedMedRecordProvider /> is required.');
   }
 
   return context;

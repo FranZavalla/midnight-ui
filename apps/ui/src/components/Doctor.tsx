@@ -1,4 +1,4 @@
-import { DeployedCounterAPI } from '@/api';
+import { DeployedMedRecordsAPI } from '@/api';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { ContractData, UserRole } from '../App';
 import { Button } from './Button';
@@ -12,7 +12,7 @@ interface DoctorProps {
 }
 
 export const Doctor = ({ setData, setRole }: DoctorProps) => {
-  const [deployedBoardAPI, setDeployedBoardAPI] = useState<DeployedCounterAPI>();
+  const [deployedMedRecordAPI, setDeployedMedRecordAPI] = useState<DeployedMedRecordsAPI>();
   const [textData, setTextData] = useState<boolean>(false);
   const [clientPub, setClientPub] = useState<string>('');
   const [contractHash, setContractHash] = useState<string>('');
@@ -31,7 +31,7 @@ export const Doctor = ({ setData, setRole }: DoctorProps) => {
     setData((prev) => prev.set(clientPub, [0, textData]));
   };
 
-  if (!deployedBoardAPI?.deployedContractAddress)
+  if (!deployedMedRecordAPI?.deployedContractAddress)
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-gray-50 p-4">
         <h1 className="text-4xl font-bold text-green-600">DOCTOR</h1>
@@ -44,8 +44,8 @@ export const Doctor = ({ setData, setRole }: DoctorProps) => {
             className="mb-4 mt-4"
           />
           <JoinContract
-            deployedBoardAPI={deployedBoardAPI}
-            setDeployedBoardAPI={setDeployedBoardAPI}
+            deployedMedRecordAPI={deployedMedRecordAPI}
+            setDeployedMedRecordAPI={setDeployedMedRecordAPI}
             hash={contractHash}
           />
         </div>
@@ -57,7 +57,9 @@ export const Doctor = ({ setData, setRole }: DoctorProps) => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-6 bg-gray-50">
+      <div>Gov Address: {deployedMedRecordAPI?.deployedContractAddress} </div>
       <h1 className="text-4xl font-bold text-green-600">DOCTOR</h1>
+
       <div>Do your thing</div>
 
       <div className="flex gap-3 justify-center items-center p-4 border rounded shadow bg-white w-auto ">

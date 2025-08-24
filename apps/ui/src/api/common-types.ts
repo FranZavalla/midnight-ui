@@ -9,19 +9,19 @@ export type PrivateStates = {
   readonly counterPrivateState: CounterPrivateState;
 };
 
-export type CounterContract = Counter.Contract<CounterPrivateState, Counter.Witnesses<CounterPrivateState>>;
+export type MedRecordContract = Counter.Contract<CounterPrivateState, Counter.Witnesses<CounterPrivateState>>;
 
-export type CounterCircuitKeys = Exclude<keyof CounterContract['impureCircuits'], number | symbol>;
+export type MedRecordCircuitKeys = Exclude<keyof MedRecordContract['impureCircuits'], number | symbol>;
 
-export type CounterProviders = MidnightProviders<CounterCircuitKeys, PrivateStateId, CounterPrivateState>;
+export type MedRecordProviders = MidnightProviders<MedRecordCircuitKeys, PrivateStateId, CounterPrivateState>;
 
-export type DeployedCounterContract = FoundContract<CounterContract>;
+export type DeployedMedRecordContract = FoundContract<MedRecordContract>;
 
 export type UserInfo = {
   rewards: bigint;
   data: boolean;
 };
 
-export type CounterDerivedState = {
+export type MedRecordDerivedState = {
   readonly beneficiaries: Map<string, UserInfo>;
 };

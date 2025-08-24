@@ -1,20 +1,20 @@
-import { DeployedCounterAPI } from '@/api';
-import { BoardDeployment } from '@/contexts';
+import { DeployedMedRecordsAPI } from '@/api';
+import { MedRecordDeployment } from '@/contexts';
 import { ContractAddress } from '@midnight-ntwrk/zswap';
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import { Observable } from 'rxjs';
-import { useDeployedContractContext } from '../hooks/useDeployedBoardContext';
+import { useDeployedContractContext } from '../hooks/useDeployedMedRecordContext';
 import { Button } from './Button';
 import { ShowAddress } from './ShowAddress';
 
 export const JoinContract = ({
   hash,
-  deployedBoardAPI,
-  setDeployedBoardAPI,
+  deployedMedRecordAPI,
+  setDeployedMedRecordAPI,
 }: {
   hash: string;
-  deployedBoardAPI: DeployedCounterAPI | undefined;
-  setDeployedBoardAPI: Dispatch<SetStateAction<DeployedCounterAPI | undefined>>;
+  deployedMedRecordAPI: DeployedMedRecordsAPI | undefined;
+  setDeployedMedRecordAPI: Dispatch<SetStateAction<DeployedMedRecordsAPI | undefined>>;
 }) => {
   const counterApiProvider = useDeployedContractContext();
   const onJoinContract = useCallback(
@@ -24,10 +24,10 @@ export const JoinContract = ({
     [counterApiProvider],
   );
 
-  const [boardDeployments, setBoardDeployments] = useState<Array<Observable<BoardDeployment>>>([]);
+  const [medRecordDeployments, setMedRecordDeployments] = useState<Array<Observable<MedRecordDeployment>>>([]);
 
   useEffect(() => {
-    const subscription = counterApiProvider.boardDeployments$.subscribe(setBoardDeployments);
+    const subscription = counterApiProvider.medRecordDeployments$.subscribe(setMedRecordDeployments);
 
     return () => {
       subscription.unsubscribe();
@@ -38,12 +38,12 @@ export const JoinContract = ({
     <div>
       <Button onClick={() => onJoinContract(hash)}>JOIN</Button>
       <div>
-        {boardDeployments.map((deploy, id) => (
-          <div data-testid={`board-${id}`} key={`board-${id}`}>
+        {medRecordDeployments.map((deploy, id) => (
+          <div data-testid={`rec-${id}`} key={`rec-${id}`}>
             <ShowAddress
               deploy={deploy}
-              deployedBoardAPI={deployedBoardAPI}
-              setDeployedBoardAPI={setDeployedBoardAPI}
+              deployedMedRecordAPI={deployedMedRecordAPI}
+              setDeployedMedRecordAPI={setDeployedMedRecordAPI}
             />
           </div>
         ))}

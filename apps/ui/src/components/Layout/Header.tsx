@@ -13,12 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React from 'react';
 import { AppBar, Box } from '@mui/material';
+import React from 'react';
 
-/**
- * A simple application level header for the bulletin board application.
- */
 export const Header: React.FC = () => (
   <AppBar
     position="static"

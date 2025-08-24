@@ -1,11 +1,11 @@
 'use client';
-import { DeployedCounterAPI } from '@/api';
+import { DeployedMedRecordsAPI } from '@/api';
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import { ContractData, UserRole } from '../App';
 import { Button } from './Button';
 import { CreateContract } from './CreateContract';
 import { Input } from './Input';
-import { JoinInstance } from './JoinInstance';
+import { JoinContract } from './JoinContract';
 
 export const Gov = ({
   setData,
@@ -14,8 +14,8 @@ export const Gov = ({
   setData: Dispatch<SetStateAction<ContractData>>;
   setRole: Dispatch<SetStateAction<UserRole | undefined>>;
 }) => {
-  const [deployedBoardAPI, setDeployedBoardAPI] = useState<DeployedCounterAPI>();
-  const [value, setValue] = useState<string>('');
+  const [deployedMedRecordAPI, setDeployedMedRecordAPI] = useState<DeployedMedRecordsAPI>();
+  const [contractHash, setContractHash] = useState<string>('');
   const [doctor, setDoctor] = useState<string>('');
   const [money, setMoney] = useState<number>(0);
   const [patient, setPatient] = useState<string>('');
@@ -42,7 +42,7 @@ export const Gov = ({
       return newData;
     });
   };
-  if (!value) {
+  if (!deployedMedRecordAPI?.deployedContractAddress) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-gray-50 p-4">
         <h1 className="text-4xl font-bold text-red-700">GOVERNMENT</h1>
@@ -50,10 +50,23 @@ export const Gov = ({
 
         <div className="flex gap-5 w-full justify-center">
           <div className="flex flex-col items-center justify-center gap-2 p-4 border rounded shadow bg-white w-full max-w-md">
-            <CreateContract deployedBoardAPI={deployedBoardAPI} setDeployedBoardAPI={setDeployedBoardAPI} />
+            <CreateContract />
           </div>
 
-          <JoinInstance setContract={setValue} />
+          <div className="w-full max-w-md">
+            <Input
+              placeholder="Enter your gov hash"
+              value={contractHash}
+              onChange={(e) => setContractHash(e.target.value)}
+              name="hash"
+              className="mb-4 mt-4"
+            />
+            <JoinContract
+              deployedMedRecordAPI={deployedMedRecordAPI}
+              hash={contractHash}
+              setDeployedMedRecordAPI={setDeployedMedRecordAPI}
+            />
+          </div>
         </div>
         <Button color="error" onClick={() => setRole(undefined)}>
           BACK
@@ -64,6 +77,8 @@ export const Gov = ({
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-gray-50 p-4">
+      <div>Gov Address: {deployedMedRecordAPI?.deployedContractAddress} </div>
+
       <h1 className="text-4xl font-bold text-red-700">GOVERNMENT</h1>
 
       <div className="flex gap-5">

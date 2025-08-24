@@ -4,11 +4,11 @@ import { Counter, CounterPrivateState, witnesses } from 'medical-contract';
 import { type Logger } from 'pino';
 import { combineLatest, from, map, type Observable } from 'rxjs';
 import {
-  CounterContract,
-  CounterDerivedState,
-  counterPrivateStateKey,
-  CounterProviders,
-  DeployedCounterContract,
+  DeployedMedRecordContract,
+  MedRecordContract,
+  MedRecordDerivedState,
+  counterPrivateStateKey as medRecordPrivateStateKey,
+  MedRecordProviders,
   UserInfo,
 } from './common-types.js';
 
@@ -19,14 +19,11 @@ export const randomBytes = (length: number): Uint8Array => {
 };
 
 /** @internal */
-const medicalContractInstance: CounterContract = new Counter.Contract(witnesses);
+const medicalContractInstance: MedRecordContract = new Counter.Contract(witnesses);
 
-/**
- * An API for a deployed bulletin board.
- */
-export interface DeployedCounterAPI {
+export interface DeployedMedRecordsAPI {
   readonly deployedContractAddress: ContractAddress;
-  readonly state$: Observable<CounterDerivedState>;
+  readonly state$: Observable<MedRecordDerivedState>;
 
   increment: () => Promise<void>;
   increment2: () => Promise<void>;
@@ -35,38 +32,21 @@ export interface DeployedCounterAPI {
   grantVerifier: (address: string) => Promise<void>;
 }
 
-/**
- * Provides an implementation of {@link DeployedCounterAPI} by adapting a deployed bulletin board
- * contract.
- *
- * @remarks
- * The `BBoardPrivateState` is managed at the DApp level by a private state provider. As such, this
- * private state is shared between all instances of {@link CounterAPI}, and their underlying deployed
- * contracts. The private state defines a `'secretKey'` property that effectively identifies the current
- * user, and is used to determine if the current user is the owner of the message as the observable
- * contract state changes.
- *
- * In the future, Midnight.js will provide a private state provider that supports private state storage
- * keyed by contract address. This will remove the current workaround of sharing private state across
- * the deployed bulletin board contracts, and allows for a unique secret key to be generated for each bulletin
- * board that the user interacts with.
- */
-// TODO: Update BBoardAPI to use contract level private state storage.
-export class CounterAPI implements DeployedCounterAPI {
+export class MedRecordsAPI implements DeployedMedRecordsAPI {
   /** @internal */
   private constructor(
-    public readonly deployedContract: DeployedCounterContract,
-    providers: CounterProviders,
+    public readonly deployedContract: DeployedMedRecordContract,
+    providers: MedRecordProviders,
     private readonly logger?: Logger,
   ) {
-    console.log('DEPLOYED-COUNTER', deployedContract);
+    console.log('DEPLOYED-CONTRACT', deployedContract);
     this.deployedContractAddress = deployedContract.deployTxData.public.contractAddress;
     this.state$ = combineLatest(
       [
         providers.publicDataProvider
           .contractStateObservable(this.deployedContractAddress, { type: 'latest' })
           .pipe(map((contractState) => Counter.ledger(contractState.data))),
-        from(providers.privateStateProvider.get(counterPrivateStateKey) as Promise<CounterPrivateState>),
+        from(providers.privateStateProvider.get(medRecordPrivateStateKey) as Promise<CounterPrivateState>),
       ],
       (ledgerState, privateState) => {
         const hashedSecretKey = Counter.pureCircuits.publicKey(privateState.secretKey);
@@ -80,7 +60,7 @@ export class CounterAPI implements DeployedCounterAPI {
 
   readonly deployedContractAddress: ContractAddress;
 
-  readonly state$: Observable<CounterDerivedState>;
+  readonly state$: Observable<MedRecordDerivedState>;
 
   async increment() {
     const txData = await this.deployedContract.callTx.increment();
@@ -96,30 +76,30 @@ export class CounterAPI implements DeployedCounterAPI {
   }
   async grantVerifier(address: string) {}
 
-  static async deploy(providers: CounterProviders): Promise<CounterAPI> {
-    const deployecCounterContract = await deployContract<typeof medicalContractInstance>(providers, {
-      privateStateId: counterPrivateStateKey,
+  static async deploy(providers: MedRecordProviders): Promise<MedRecordsAPI> {
+    const deployecMedRecordContract = await deployContract<typeof medicalContractInstance>(providers, {
+      privateStateId: medRecordPrivateStateKey,
       contract: medicalContractInstance,
-      initialPrivateState: await CounterAPI.getPrivateState(providers),
+      initialPrivateState: await MedRecordsAPI.getPrivateState(providers),
     });
-    console.log('deployedCounterContract-------------', deployecCounterContract);
+    console.log('deployedMedRecordContract-------------', deployecMedRecordContract);
 
-    return new CounterAPI(deployecCounterContract, providers);
+    return new MedRecordsAPI(deployecMedRecordContract, providers);
   }
 
-  static async join(providers: CounterProviders, address: ContractAddress): Promise<CounterAPI> {
-    const deployedCounterContract = await findDeployedContract<CounterContract>(providers, {
+  static async join(providers: MedRecordProviders, address: ContractAddress): Promise<MedRecordsAPI> {
+    const deployedMedRecordContract = await findDeployedContract<MedRecordContract>(providers, {
       contractAddress: address,
       contract: medicalContractInstance,
-      privateStateId: counterPrivateStateKey,
-      initialPrivateState: await CounterAPI.getPrivateState(providers),
+      privateStateId: medRecordPrivateStateKey,
+      initialPrivateState: await MedRecordsAPI.getPrivateState(providers),
     });
 
-    return new CounterAPI(deployedCounterContract, providers);
+    return new MedRecordsAPI(deployedMedRecordContract, providers);
   }
 
-  private static async getPrivateState(providers: CounterProviders): Promise<CounterPrivateState> {
-    const existingPrivateState = await providers.privateStateProvider.get(counterPrivateStateKey);
+  private static async getPrivateState(providers: MedRecordProviders): Promise<CounterPrivateState> {
+    const existingPrivateState = await providers.privateStateProvider.get(medRecordPrivateStateKey);
     return existingPrivateState ?? { secretKey: randomBytes(32) };
   }
 }
