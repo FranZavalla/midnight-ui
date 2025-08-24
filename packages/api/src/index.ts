@@ -1,5 +1,7 @@
-import { type ContractAddress } from '@midnight-ntwrk/compact-runtime';
+import { encodeTokenType,  type ContractAddress } from '@midnight-ntwrk/compact-runtime';
 import { Counter, CounterPrivateState, witnesses } from 'medical-contract';
+import { nativeToken } from '@midnight-ntwrk/ledger';
+
 import { type Logger } from 'pino';
 import { combineLatest, from, map, type Observable } from 'rxjs';
 import {
@@ -9,6 +11,7 @@ import {
   DeployedCounterContract,
   UserInfo,
 } from './common-types.js';
+import { randomBytes } from './utils/index.js';
 
 /** @internal */
 const medicalContractInstance = new Counter.Contract(witnesses);
@@ -20,8 +23,8 @@ export interface DeployedCounterAPI {
   readonly deployedContractAddress: ContractAddress;
   readonly state$: Observable<CounterDerivedState>;
 
-  increment: () => Promise<void>;
-  increment2: () => Promise<void>;
+  addRewards: (rewardsPerBeneficiary: bigint, key: Uint8Array) => Promise<void>;
+  claimRewards: (value: bigint) => Promise<void>;
   addBeneficiary: (address: Uint8Array, condition: boolean) => Promise<void>;
   lookupData: (key: string) => Promise<string | undefined>;
   grantVerifier: (address: string) => Promise<void>;
@@ -86,12 +89,24 @@ export class CounterAPI implements DeployedCounterAPI {
    */
   readonly state$: Observable<CounterDerivedState>;
 
-  async increment() {
-    const txData = await this.deployedContract.callTx.increment();
+  async addRewards(rewardsPerBeneficiary: bigint, key: Uint8Array) {
+    const coinInfo = {
+      color: encodeTokenType(nativeToken()),
+      nonce: randomBytes(32),
+      value: rewardsPerBeneficiary,
+    }
+    const txData = await this.deployedContract.callTx.addRewards(coinInfo, rewardsPerBeneficiary, key)
   }
-  async increment2() {
-    const txData = await this.deployedContract.callTx.increment2();
+
+  async claimRewards(value: bigint) {
+    const coinInfo = {
+      color: encodeTokenType(nativeToken()),
+      nonce: randomBytes(32),
+      value: value,
+    }
+    const txData = await this.deployedContract.callTx.claimRewards(coinInfo, value)
   }
+
   async addBeneficiary(publicKey: Uint8Array, condition: boolean) {
     // Counter.pureCircuits.publicKey(publicKey);
     const txData = await this.deployedContract.callTx.addBeneficiary(publicKey, condition);
