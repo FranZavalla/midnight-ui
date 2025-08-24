@@ -1,0 +1,11 @@
+{"level":30,"time":1756057689132,"pid":362638,"hostname":"benja-Legion-7-16IRX9","msg":"File path for save file not found, building wallet from scratch"}
+{"level":30,"time":1756057689189,"pid":362638,"hostname":"benja-Legion-7-16IRX9","msg":"Your wallet seed is: 2f616162ada3206cf894f7668a3c35a0e3db7dc126397d098bd25ddb2016c131"}
+{"level":30,"time":1756057689189,"pid":362638,"hostname":"benja-Legion-7-16IRX9","msg":"Your wallet address is: mn_shield-addr_test1zudg3evtkertx8x275wcen2mddu3jgt4uu39nx03u9ny4tasfznsxqrneaqunza30aelg7hav5g46c8y20tw7zfl32s8q5z0kndh6uh5fsv5rd3g"}
+{"level":30,"time":1756057689189,"pid":362638,"hostname":"benja-Legion-7-16IRX9","msg":"Your wallet balance is: 0"}
+{"level":30,"time":1756057689190,"pid":362638,"hostname":"benja-Legion-7-16IRX9","msg":"Waiting to receive tokens..."}
+{"level":30,"time":1756057689193,"pid":362638,"hostname":"benja-Legion-7-16IRX9","msg":"Waiting for funds. Backend lag: 0, wallet lag: 0, transactions=0"}
+{"level":30,"time":1756057700717,"pid":362638,"hostname":"benja-Legion-7-16IRX9","msg":"Waiting for funds. Backend lag: 0, wallet lag: 0, transactions=38"}
+{"level":30,"time":1756057700718,"pid":362638,"hostname":"benja-Legion-7-16IRX9","msg":"Your wallet balance is: 970620948"}
+{"level":30,"time":1756057703211,"pid":362638,"hostname":"benja-Legion-7-16IRX9","msg":"Deploying counter contract..."}
+{"level":50,"time":1756057703214,"pid":362638,"hostname":"benja-Legion-7-16IRX9","msg":"Found error 'ENOENT: no such file or directory, open '/home/benja/Work/midnight/midnight-ui/apps/ui/packages/contract/src/managed/counter/keys/addBeneficiary.verifier''"}
+{"level":30,"time":1756057703214,"pid":362638,"hostname":"benja-Legion-7-16IRX9","msg":"Exiting..."}

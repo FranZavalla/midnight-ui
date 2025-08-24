@@ -33,6 +33,7 @@
     "vitest": "^3.2.0"
   },
   "dependencies": {
-    "@midnight-ntwrk/compact-runtime": "^0.8.1"
+    "@midnight-ntwrk/compact-runtime": "^0.8.1",
+    "testcontainers": "^11.5.1"
   }
 }

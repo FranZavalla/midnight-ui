@@ -11,7 +11,6 @@ import {
   DeployedCounterContract,
   UserInfo,
 } from './common-types.js';
-import { CoinInfo } from '@midnight-ntwrk/zswap';
 import { encodeTokenType, nativeToken } from '@midnight-ntwrk/ledger';
 
 export const randomBytes = (length: number): Uint8Array => {
@@ -30,8 +29,8 @@ export interface DeployedCounterAPI {
   readonly deployedContractAddress: ContractAddress;
   readonly state$: Observable<CounterDerivedState>;
 
-  addRewards: (coin: CoinInfo, rewardsPerBeneficiary: bigint, key: Uint8Array) => Promise<void>;
-  claimRewards: (coin: CoinInfo, value: bigint) => Promise<void>;
+  addRewards: (rewardsPerBeneficiary: bigint, key: Uint8Array) => Promise<void>;
+  claimRewards: (value: bigint) => Promise<void>;
   addBeneficiary: (address: Uint8Array, condition: boolean) => Promise<void>;
   lookupData: (key: string) => Promise<string | undefined>;
   grantVerifier: (address: string) => Promise<void>;
@@ -106,7 +105,7 @@ export class CounterAPI implements DeployedCounterAPI {
     console.log(`Transaction ${finalizedTxData.public.txId} added in block ${finalizedTxData.public.blockHeight}`);
   }
 
-  async addRewards(coin: CoinInfo, rewardsPerBeneficiary: bigint, key: Uint8Array) {
+  async addRewards(rewardsPerBeneficiary: bigint, key: Uint8Array) {
     console.log('Adding rewards...');
 
     const coinInfo = {
@@ -130,7 +129,7 @@ export class CounterAPI implements DeployedCounterAPI {
     return new CounterAPI(deployecCounterContract, providers);
   }
 
-  async claimRewards(coin: CoinInfo, value: bigint) {
+  async claimRewards(value: bigint) {
     console.log('Claiming rewards...');
 
     const coinInfo = {
