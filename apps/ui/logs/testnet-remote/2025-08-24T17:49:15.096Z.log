@@ -9,3 +9,9 @@
 {"level":30,"time":1756057778542,"pid":367358,"hostname":"benja-Legion-7-16IRX9","msg":"Deploying counter contract..."}
 {"level":30,"time":1756057802821,"pid":367358,"hostname":"benja-Legion-7-16IRX9","msg":"Deployed contract at address: 0200c4fa5a72d2a8515f0ce91ca4326a7c6d1c51f70690fe357519166e64a79e0a2e"}
 {"level":30,"time":1756057874358,"pid":367358,"hostname":"benja-Legion-7-16IRX9","msg":"Granting verifier..."}
+{"level":30,"time":1756057899395,"pid":367358,"hostname":"benja-Legion-7-16IRX9","msg":"Transaction 000000001e046f7025e74b251ad365679b28d1f897ec7b5102672dffa9894d4d21d572e0 added in block 1412909"}
+{"level":30,"time":1756057924033,"pid":367358,"hostname":"benja-Legion-7-16IRX9","msg":"Displaying own public key..."}
+{"level":30,"time":1756057924033,"pid":367358,"hostname":"benja-Legion-7-16IRX9","msg":"Your public key is: 20fe929d932277376c476b1e5afd4edb8edd285388ac38cccc6f7fa86c176575"}
+{"level":30,"time":1756057938741,"pid":367358,"hostname":"benja-Legion-7-16IRX9","msg":"Adding beneficiary..."}
+{"level":30,"time":1756057966875,"pid":367358,"hostname":"benja-Legion-7-16IRX9","msg":"Transaction 000000006c98e366ae1b1534d637b95227d42a1c391c040f13de72099ba66c778d86ca32 added in block 1412920"}
+{"level":30,"time":1756058067782,"pid":367358,"hostname":"benja-Legion-7-16IRX9","msg":"Exiting..."}
