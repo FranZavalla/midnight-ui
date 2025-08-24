@@ -56,6 +56,9 @@ importers:
       '@midnight-ntwrk/midnight-js-types':
         specifier: ^2.0.2
         version: 2.0.2
+      '@midnight-ntwrk/midnight-js-utils':
+        specifier: ^2.0.2
+        version: 2.0.2
       '@midnight-ntwrk/onchain-runtime':
         specifier: ^0.3.0
         version: 0.3.0

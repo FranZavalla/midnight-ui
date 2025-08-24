@@ -11,7 +11,9 @@ export const CreateAlgo = () => {
   const counterApiProvider = useDeployedContractContext();
   const onCreateContract = useCallback(() => counterApiProvider.resolve(), [counterApiProvider]);
   const onJoinContract = useCallback(
-    (contractAddress: ContractAddress) => counterApiProvider.resolve(contractAddress),
+    (contractAddress: ContractAddress) => {
+      counterApiProvider.resolve(contractAddress);
+    },
     [counterApiProvider],
   );
 
@@ -25,13 +27,19 @@ export const CreateAlgo = () => {
     };
   }, [counterApiProvider]);
 
-  useEffect(() => {
-    console.log(boardDeployments);
-  }, [boardDeployments]);
-
   return (
     <div>
       <Button onClick={onCreateContract}>CREATE ALGO</Button>
+      <div>
+        {boardDeployments.map((deploy, id) => (
+          <div data-testid={`board-${id}`} key={`board-${id}`}>
+            <Show deploy={deploy} />
+          </div>
+        ))}
+      </div>
+      <Button onClick={() => onJoinContract('02020005b60f8767b1c29c8fc615e336cc19bfe1cad5153a821c6d77c0f8b6d6dcf218')}>
+        JOIN
+      </Button>
       <div>
         {boardDeployments.map((deploy, id) => (
           <div data-testid={`board-${id}`} key={`board-${id}`}>

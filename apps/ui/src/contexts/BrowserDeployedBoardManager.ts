@@ -177,7 +177,7 @@ export class BrowserDeployedBoardManager implements DeployedContractAPIProvider 
     try {
       const providers = await this.getProviders();
       const api = await CounterAPI.deploy(providers);
-
+      console.log('PREVIO A NEXT');
       deployment.next({
         status: 'deployed',
         api,
@@ -221,7 +221,7 @@ const initializeProviders = async (): Promise<CounterProviders> => {
 
   return {
     privateStateProvider: levelPrivateStateProvider({
-      privateStateStoreName: 'bboard-private-state',
+      privateStateStoreName: 'counterPrivateState',
     }),
     zkConfigProvider: new FetchZkConfigProvider<CounterCircuitKeys>(zkConfigPath, fetch.bind(window)),
     proofProvider: httpClientProofProvider(uris.proverServerUri),

@@ -18,6 +18,8 @@ export const Show = ({ deploy }: { deploy: Observable<BoardDeployment> }) => {
 
     const subscription = deploy.subscribe(setBoardDeployment);
 
+    console.log('USE EFFECT 1', deploy, subscription);
+
     return () => {
       subscription.unsubscribe();
     };
@@ -25,15 +27,20 @@ export const Show = ({ deploy }: { deploy: Observable<BoardDeployment> }) => {
 
   useEffect(() => {
     if (!boardDeployment) {
+      console.log('NO BOARD DEPLOYMENT');
       return;
     }
     if (boardDeployment.status === 'in-progress') {
+      console.log('BOARD DEPLOYMENT IN PROGRESS');
       return;
     }
+
+    console.log('USE EFFECT 2', boardDeployment);
 
     setIsWorking(false);
 
     if (boardDeployment.status === 'failed') {
+      console.log('FAILED!!');
       setErrorMessage(
         boardDeployment.error.message.length ? boardDeployment.error.message : 'Encountered an unexpected error.',
       );
@@ -44,6 +51,8 @@ export const Show = ({ deploy }: { deploy: Observable<BoardDeployment> }) => {
     // the `post` and `takeDown` methods later.
     setDeployedBoardAPI(boardDeployment.api);
     const subscription = boardDeployment.api.state$.subscribe(setBoardState);
+
+    console.log('USE EFFECT 3', subscription);
     return () => {
       subscription.unsubscribe();
     };

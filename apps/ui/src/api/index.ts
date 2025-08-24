@@ -12,6 +12,12 @@ import {
   UserInfo,
 } from './common-types.js';
 
+export const randomBytes = (length: number): Uint8Array => {
+  const bytes = new Uint8Array(length);
+  crypto.getRandomValues(bytes);
+  return bytes;
+};
+
 /** @internal */
 const medicalContractInstance: CounterContract = new Counter.Contract(witnesses);
 
@@ -53,20 +59,15 @@ export class CounterAPI implements DeployedCounterAPI {
     providers: CounterProviders,
     private readonly logger?: Logger,
   ) {
+    console.log('DEPLOYED-COUNTER', deployedContract);
     this.deployedContractAddress = deployedContract.deployTxData.public.contractAddress;
     this.state$ = combineLatest(
       [
-        // Combine public (ledger) state with...
         providers.publicDataProvider
           .contractStateObservable(this.deployedContractAddress, { type: 'latest' })
           .pipe(map((contractState) => Counter.ledger(contractState.data))),
-        // ...private state...
-        //    since the private state of the bulletin board application never changes, we can query the
-        //    private state once and always use the same value with `combineLatest`. In applications
-        //    where the private state is expected to change, we would need to make this an `Observable`.
         from(providers.privateStateProvider.get(counterPrivateStateKey) as Promise<CounterPrivateState>),
       ],
-      // ...and combine them to produce the required derived state.
       (ledgerState, privateState) => {
         const hashedSecretKey = Counter.pureCircuits.publicKey(privateState.secretKey);
 
@@ -96,11 +97,12 @@ export class CounterAPI implements DeployedCounterAPI {
   async grantVerifier(address: string) {}
 
   static async deploy(providers: CounterProviders): Promise<CounterAPI> {
-    const deployecCounterContract = await deployContract<typeof medicalContractInstance>(providers as any, {
+    const deployecCounterContract = await deployContract<typeof medicalContractInstance>(providers, {
       privateStateId: counterPrivateStateKey,
       contract: medicalContractInstance,
       initialPrivateState: await CounterAPI.getPrivateState(providers),
     });
+    console.log('deployedCounterContract-------------', deployecCounterContract);
 
     return new CounterAPI(deployecCounterContract, providers);
   }
@@ -118,7 +120,7 @@ export class CounterAPI implements DeployedCounterAPI {
 
   private static async getPrivateState(providers: CounterProviders): Promise<CounterPrivateState> {
     const existingPrivateState = await providers.privateStateProvider.get(counterPrivateStateKey);
-    return existingPrivateState!;
+    return existingPrivateState ?? { secretKey: randomBytes(32) };
   }
 }
 
