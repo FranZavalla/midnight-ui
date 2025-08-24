@@ -13,11 +13,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { type DeployedBBoardAPI, BBoardAPI, type BBoardProviders, type BBoardCircuitKeys } from 'contract-api';
 import { type ContractAddress } from '@midnight-ntwrk/compact-runtime';
+import {
+  type DAppConnectorAPI,
+  type DAppConnectorWalletAPI,
+  type ServiceUriConfig,
+} from '@midnight-ntwrk/dapp-connector-api';
+import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
+import { pipe as fnPipe } from 'fp-ts/function';
+import { type Logger } from 'pino';
 import {
   BehaviorSubject,
   type Observable,
+  catchError,
   concatMap,
   filter,
   firstValueFrom,
@@ -28,29 +36,20 @@ import {
   tap,
   throwError,
   timeout,
-  catchError,
 } from 'rxjs';
-import { pipe as fnPipe } from 'fp-ts/function';
-import { type Logger } from 'pino';
-import {
-  type DAppConnectorAPI,
-  type DAppConnectorWalletAPI,
-  type ServiceUriConfig,
-} from '@midnight-ntwrk/dapp-connector-api';
-import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-private-state-provider';
 // import { NodeZkConfigProvider } from '@midnight-ntwrk/midnight-js-node-zk-config-provider';
+import { type CoinInfo, Transaction, type TransactionId } from '@midnight-ntwrk/ledger';
 import { FetchZkConfigProvider } from '@midnight-ntwrk/midnight-js-fetch-zk-config-provider';
 import { httpClientProofProvider } from '@midnight-ntwrk/midnight-js-http-client-proof-provider';
 import { indexerPublicDataProvider } from '@midnight-ntwrk/midnight-js-indexer-public-data-provider';
+import { getLedgerNetworkId, getZswapNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import {
   type BalancedTransaction,
   type UnbalancedTransaction,
   createBalancedTx,
 } from '@midnight-ntwrk/midnight-js-types';
-import { type CoinInfo, Transaction, type TransactionId } from '@midnight-ntwrk/ledger';
 import { Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
 import semver from 'semver';
-import { getLedgerNetworkId, getZswapNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 
 /**
  * An in-progress bulletin board deployment.
@@ -66,9 +65,8 @@ export interface DeployedBoardDeployment {
   readonly status: 'deployed';
 
   /**
-   * The {@link DeployedBBoardAPI} instance when connected to an on network bulletin board contract.
    */
-  readonly api: DeployedBBoardAPI;
+  readonly api: DeployedCounterAPI;
 }
 
 /**

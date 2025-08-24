@@ -28,8 +28,6 @@
     "@mui/icons-material": "^7.1.1",
     "@mui/material": "^7.1.1",
     "buffer": "^6.0.3",
-    "contract-api": "workspace:^",
-    "contract-primitives": "workspace:^",
     "fp-ts": "^2.16.11",
     "node-stdlib-browser": "^1.3.1",
     "pino": "^9.9.0",
@@ -40,7 +38,8 @@
     "semver": "^7.7.2",
     "vite": "^7.1.3",
     "vite-plugin-top-level-await": "^1.6.0",
-    "vite-plugin-wasm": "^3.5.0"
+    "vite-plugin-wasm": "^3.5.0",
+    "contract-api": "workspace:*"
   },
   "devDependencies": {
     "@swc/core": "^1.12.9",
