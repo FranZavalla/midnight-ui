@@ -11,14 +11,18 @@ export function Button({
   className: customClassName,
   onClick: onClickFn,
   disabled,
+  onMouseEnter,
+  onMouseLeave,
 }: ButtonProps) {
   return (
     <button
       onClick={onClickFn}
       type={type}
       disabled={disabled}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       className={`h-10 text-xl inline-flex select-none items-center justify-center border border-black cursor-pointer
-        rounded-lg px-5 py-2 text-center font-semibold tracking-wide w-auto ${customClassName}
+        rounded-lg px-5 py-2 text-center font-semibold tracking-wide ${customClassName ?? 'w-auto'}
         disabled:cursor-not-allowed disabled:bg-gray-400 disabled:hover:text-black`}
     >
       {children}

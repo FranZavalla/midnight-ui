@@ -1,18 +1,3 @@
-// This file is part of midnightntwrk/example-counter.
-// Copyright (C) 2025 Midnight Foundation
-// SPDX-License-Identifier: Apache-2.0
-// Licensed under the Apache License, Version 2.0 (the "License");
-// You may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 import { DAppConnectorWalletAPI } from '@midnight-ntwrk/dapp-connector-api';
 import React, { useState } from 'react';
 import { Button } from './components/Button';
@@ -23,18 +8,8 @@ import { Patient } from './components/Patient';
 
 type Money = number;
 type Condition = boolean;
-type Key = string; // esto cambiará?
+type Key = string;
 export type ContractData = Map<Key, [Money, Condition]>;
-
-/**
- * The root bulletin board application component.
- *
- * @remarks
- * The {@link App} component requires a `<DeployedBoardProvider />` parent in order to retrieve
- * information about current bulletin board deployments.
- *
- * @internal
- */
 
 const initData: ContractData = new Map<Key, [Money, Condition]>([
   ['alice', [1200, true]],
@@ -53,7 +28,7 @@ const App: React.FC = () => {
   const [role, setRole] = useState<UserRole | undefined>(undefined);
   const [data, setData] = useState<ContractData>(initData);
   const [wallet, setWallet] = useState<DAppConnectorWalletAPI | undefined>(undefined);
-  const [hover, setHover] = useState(false);
+  const [hover, setHover] = useState<UserRole | undefined>(undefined);
 
   const handleGovClick = () => setRole(UserRole.GOV);
   const handleDoctorClick = () => setRole(UserRole.DOC);
@@ -66,30 +41,41 @@ const App: React.FC = () => {
       {role === UserRole.PAT && <Patient data={data} setData={setData} setRole={setRole} />}
       {role === undefined && (
         <div className="h-screen text-center flex flex-col items-center justify-center gap-10">
-          <div className="text-5xl font-bold">Select your role</div>
-          <div className="flex gap-3 justify-center">
+          <div className="flex flex-col gap-0">
+            <div className="text-5xl font-bold">Select your role</div>&nbsp;
+            {!wallet && <div className="text-2xl">or connect your wallet</div>}
+          </div>
+          <div className="flex flex-col gap-5 justify-center items-center">
             {!wallet && <ConnectWallet setWallet={setWallet} />}
-            <Button
-              className={wallet && 'hover:text-red-700 hover:border-red-700'}
-              onClick={handleGovClick}
-              disabled={!wallet}
-            >
-              {wallet ? "I'm a government official" : 'Connect wallet first'}
-            </Button>
-            <Button
-              className={wallet && 'hover:text-green-700 hover:border-green-700'}
-              onClick={handleDoctorClick}
-              disabled={!wallet}
-            >
-              {wallet ? "I'm a doctor" : 'Connect wallet first'}
-            </Button>
-            <Button
-              className={wallet && 'hover:text-blue-700 hover:border-blue-700'}
-              onClick={handlePatientClick}
-              disabled={!wallet}
-            >
-              {wallet ? "I'm a patient" : 'Connect wallet first'}
-            </Button>
+            <div className="flex gap-3 justify-center">
+              <Button
+                className={'w-80 ' + (wallet && 'hover:text-red-700 hover:border-red-700')}
+                onClick={handleGovClick}
+                disabled={hover === UserRole.GOV && !wallet}
+                onMouseEnter={() => setHover(UserRole.GOV)}
+                onMouseLeave={() => setHover(undefined)}
+              >
+                {hover === UserRole.GOV && !wallet ? 'Connect your wallet first' : "I'm a government official"}
+              </Button>
+              <Button
+                className={'w-80 ' + (wallet && 'hover:text-green-700 hover:border-green-700')}
+                onClick={handleDoctorClick}
+                disabled={hover === UserRole.DOC && !wallet}
+                onMouseEnter={() => setHover(UserRole.DOC)}
+                onMouseLeave={() => setHover(undefined)}
+              >
+                {hover === UserRole.DOC && !wallet ? 'Connect your wallet first' : "I'm a doctor"}
+              </Button>
+              <Button
+                className={'w-80 ' + (wallet && 'hover:text-blue-700 hover:border-blue-700')}
+                onClick={handlePatientClick}
+                disabled={hover === UserRole.PAT && !wallet}
+                onMouseEnter={() => setHover(UserRole.PAT)}
+                onMouseLeave={() => setHover(undefined)}
+              >
+                {hover === UserRole.PAT && !wallet ? 'Connect your wallet first' : "I'm a patient"}
+              </Button>
+            </div>
           </div>
         </div>
       )}

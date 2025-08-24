@@ -1,8 +1,11 @@
 {
-  "name": "contract-primitives",
+  "name": "medical-contract",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "private": true,
   "type": "module",
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
@@ -10,16 +13,7 @@
       "require": "./dist/index.js",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
-    },
-    "./managed": "./dist/managed",
-    "./managed/*": "./dist/managed/*",
-    "./managed/bboard/contract": {
-      "types": "./dist/managed/bboard/contract/index.d.cts",
-      "require": "./dist/managed/bboard/contract/index.cjs"
-    },
-    "./managed/bboard/compiler/*": "./dist/managed/bboard/compiler/*",
-    "./managed/bboard/keys/*": "./dist/managed/bboard/keys/*",
-    "./managed/bboard/zkir/*": "./dist/managed/bboard/zkir/*"
+    }
   },
   "scripts": {
     "build": "rm -rf dist && pnpm run compact && tsc --project tsconfig.build.json && cp -r ./src/managed ./dist/managed && cp ./src/bboard.compact ./dist",
