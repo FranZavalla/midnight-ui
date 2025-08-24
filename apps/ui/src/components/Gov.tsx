@@ -1,7 +1,9 @@
 'use client';
-import { DeployedMedRecordsAPI } from '@/api';
+import { Counter } from 'medical-contract';
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
+import { DeployedMedRecordsAPI, MedRecordsAPI } from '../api';
 import { ContractData, UserRole } from '../App';
+import { initializeProviders } from '../contexts/BrowserDeployedMedRecordManager';
 import { Button } from './Button';
 import { CreateContract } from './CreateContract';
 import { Input } from './Input';
@@ -26,22 +28,16 @@ export const Gov = ({
     setMoney(Number(e.target.value));
   };
 
-  const handlePayMoney = () => {
-    setData((prev) => {
-      const newData = new Map(prev);
-      if (newData.has(patient)) {
-        if (!money) {
-          setError('Please enter a valid amount');
-        } else {
-          const [currentMoney, currentCondition] = newData.get(patient)!;
-          newData.set(patient, [currentMoney + money, currentCondition]);
-        }
-      } else {
-        setError('Patient does not exist');
-      }
-
-      return newData;
-    });
+  const handlePayMoney = async () => {
+    if (!money) {
+      setError('Please enter a valid amount');
+    } else if (!deployedMedRecordAPI) {
+      console.log('NO API');
+    } else {
+      const providers = await initializeProviders();
+      const privState = await MedRecordsAPI.getPrivateState(providers);
+      await deployedMedRecordAPI.addRewards(BigInt(money), Counter.pureCircuits.publicKey(privState.secretKey));
+    }
   };
 
   const handleAddDoctor = async () => {
