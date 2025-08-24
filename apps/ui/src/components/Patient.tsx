@@ -21,7 +21,7 @@ export const Patient = ({
   if (!contract)
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-gray-50 p-4">
-        <h1 className="text-4xl font-bold text-green-600">PATIENT</h1>
+        <h1 className="text-4xl font-bold text-blue-600">PATIENT</h1>
         <JoinInstance setContract={setContract} />
         <Button onClick={() => setRole(undefined)}>BACK</Button>
       </div>
@@ -29,7 +29,7 @@ export const Patient = ({
 
   return (
     <div className="min-h-screen flex flex-col w-full items-center justify-center gap-4 p-6 bg-gray-50">
-      <h1 className="text-4xl font-bold text-green-600">PATIENT</h1>
+      <h1 className="text-4xl font-bold text-blue-600">PATIENT</h1>
       <div>Do your thing</div>
       <div className="flex items-center gap-2 p-4 border rounded shadow bg-white w-auto">
         <Input

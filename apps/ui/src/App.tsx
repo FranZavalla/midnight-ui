@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { DAppConnectorWalletAPI } from '@midnight-ntwrk/dapp-connector-api';
 import React, { useState } from 'react';
 import { Button } from './components/Button';
 import { ConnectWallet } from './components/ConnectWallet';
@@ -51,6 +52,8 @@ export enum UserRole {
 const App: React.FC = () => {
   const [role, setRole] = useState<UserRole | undefined>(undefined);
   const [data, setData] = useState<ContractData>(initData);
+  const [wallet, setWallet] = useState<DAppConnectorWalletAPI | undefined>(undefined);
+  const [hover, setHover] = useState(false);
 
   const handleGovClick = () => setRole(UserRole.GOV);
   const handleDoctorClick = () => setRole(UserRole.DOC);
@@ -58,17 +61,38 @@ const App: React.FC = () => {
 
   return (
     <>
-      {role === UserRole.GOV && <Gov data={data} setData={setData} setRole={setRole} />}
+      {role === UserRole.GOV && <Gov setData={setData} setRole={setRole} />}
       {role === UserRole.DOC && <Doctor data={data} setData={setData} setRole={setRole} />}
       {role === UserRole.PAT && <Patient data={data} setData={setData} setRole={setRole} />}
       {role === undefined && (
         <div className="h-screen text-center flex flex-col items-center justify-center gap-10">
           <div className="text-5xl font-bold">Select your role</div>
           <div className="flex gap-3 justify-center">
-            <ConnectWallet />
-            <Button onClick={handleGovClick}>I&apos;m a government official</Button>
-            <Button onClick={handleDoctorClick}>I&apos;m a doctor</Button>
-            <Button onClick={handlePatientClick}>I&apos;m a patient</Button>
+            {!wallet && <ConnectWallet setWallet={setWallet} />}
+            <Button
+              className={wallet && 'hover:text-red-700 hover:border-red-700'}
+              onClick={handleGovClick}
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
+            >
+              {!hover ? "I'm a government official" : 'Connect wallet first'}
+            </Button>
+            <Button
+              className={wallet && 'hover:text-green-700 hover:border-green-700'}
+              onClick={handleDoctorClick}
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
+            >
+              {!hover ? "I'm a doctor" : 'Connect wallet first'}
+            </Button>
+            <Button
+              className={wallet && 'hover:text-blue-700 hover:border-blue-700'}
+              onClick={handlePatientClick}
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
+            >
+              {!hover ? "I'm a patient" : 'Connect wallet first'}
+            </Button>
           </div>
         </div>
       )}
