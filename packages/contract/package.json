@@ -23,8 +23,9 @@
   },
   "scripts": {
     "build": "rm -rf dist && pnpm run compact && tsc --project tsconfig.build.json && cp -r ./src/managed ./dist/managed && cp ./src/bboard.compact ./dist",
-    "compact": "compact compile src/bboard.compact ./src/managed/bboard",
-    "lint": "eslint src"
+    "compact": "compact compile src/counter.compact ./src/managed/bboard",
+    "lint": "eslint src",
+    "setup": "pnpm run compact && pnpm run build"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",

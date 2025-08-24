@@ -1,14 +1,20 @@
 {
   "circuits": [
     {
-      "name": "post",
+      "name": "addBeneficiary",
       "pure": false,
       "arguments": [
         {
-          "name": "newMessage",
+          "name": "beneficiary",
           "type": {
-            "type-name": "Opaque",
-            "tsType": "string"
+            "type-name": "Bytes",
+            "length": 32
+          }
+        },
+        {
+          "name": "data",
+          "type": {
+            "type-name": "Boolean"
           }
         }
       ],
@@ -19,13 +25,142 @@
       }
     },
     {
-      "name": "takeDown",
+      "name": "lookupData",
       "pure": false,
       "arguments": [
       ],
       "result-type": {
-        "type-name": "Opaque",
-        "tsType": "string"
+        "type-name": "Boolean"
+      }
+    },
+    {
+      "name": "grantVerifier",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "verifier",
+          "type": {
+            "type-name": "Struct",
+            "name": "ZswapCoinPublicKey",
+            "elements": [
+              {
+                "name": "bytes",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "addRewards",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "coin",
+          "type": {
+            "type-name": "Struct",
+            "name": "CoinInfo",
+            "elements": [
+              {
+                "name": "nonce",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "color",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "value",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 340282366920938463463374607431768211455
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "rewardsPerBeneficiary",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 340282366920938463463374607431768211455
+          }
+        },
+        {
+          "name": "key",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "claimRewards",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "coin",
+          "type": {
+            "type-name": "Struct",
+            "name": "CoinInfo",
+            "elements": [
+              {
+                "name": "nonce",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "color",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "value",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 340282366920938463463374607431768211455
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "value",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 340282366920938463463374607431768211455
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
       }
     },
     {
@@ -34,13 +169,6 @@
       "arguments": [
         {
           "name": "sk",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        },
-        {
-          "name": "sequence",
           "type": {
             "type-name": "Bytes",
             "length": 32

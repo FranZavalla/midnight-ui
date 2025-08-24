@@ -1,0 +1,114 @@
+// This file is part of midnightntwrk/example-counter.
+// Copyright (C) 2025 Midnight Foundation
+// SPDX-License-Identifier: Apache-2.0
+// Licensed under the Apache License, Version 2.0 (the "License");
+// You may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+pragma language_version >= 0.16 && <= 0.17;
+
+import CompactStandardLibrary;
+import "./AccessControl" prefix AccessControl_;
+
+struct UserInfo {
+  rewards: Uint<128>,
+  data: Boolean,
+}
+
+export sealed ledger Verifiers: Bytes<32>;
+
+export ledger beneficiaries: Map<Bytes<32>, UserInfo>;
+
+export ledger counter: Uint<32>;
+
+export ledger protocolTVL: Map<Bytes<32>, QualifiedCoinInfo>;
+
+witness localSecretKey(): Bytes<32>;
+
+constructor() {
+  Verifiers = persistentHash<Bytes<32>>(pad(32, "VERIFIERS"));
+  AccessControl__grantRole(AccessControl_DEFAULT_ADMIN_ROLE, left<ZswapCoinPublicKey, ContractAddress>(ownPublicKey()));
+}
+
+
+export circuit addBeneficiary(beneficiary: Bytes<32>, data: Boolean): [] {
+  AccessControl_assertOnlyRole(Verifiers);
+  const $beneficiary = disclose(beneficiary);
+  const $data = disclose(data);
+
+  if (beneficiaries.member($beneficiary)){
+    const currentRewards = beneficiaries.lookup($beneficiary);
+    beneficiaries.insert($beneficiary, UserInfo { rewards: currentRewards.rewards as Uint<128>, data: $data });
+  }
+  else
+   { beneficiaries.insert($beneficiary, UserInfo { rewards: 0, data: $data });}
+}
+
+export circuit lookupData(): Boolean {
+  return beneficiaries.lookup(disclose(publicKey(localSecretKey()))).data;
+}
+
+export circuit grantVerifier(verifier: ZswapCoinPublicKey): [] {
+  AccessControl_assertOnlyRole(AccessControl_DEFAULT_ADMIN_ROLE);
+
+  AccessControl__grantRole(Verifiers, left<ZswapCoinPublicKey, ContractAddress>(verifier));
+}
+
+export circuit addRewards(coin: CoinInfo, rewardsPerBeneficiary: Uint<128>, key: Bytes<32>): [] {
+  AccessControl_assertOnlyRole(AccessControl_DEFAULT_ADMIN_ROLE);
+  const disclosedCoin = disclose(coin);
+  receive(disclosedCoin);
+  const totalRewards = rewardsPerBeneficiary; //* beneficiaries.size();
+  assert(disclosedCoin.value == totalRewards, "Coin amount does not match total rewards"); // dont know size is ok
+
+  // This is not working properly right now, the insertCoin fails trying to prove the transaction.
+  // const coinToInsert = protocolTVL.member(disclosedCoin.color) ? 
+  // mergeCoinImmediate(protocolTVL.lookup(disclosedCoin.color), disclosedCoin) :
+  // disclosedCoin;
+
+  // protocolTVL.insertCoin(
+  //     disclosedCoin.color, 
+  //     coinToInsert,
+  //     right<ZswapCoinPublicKey, ContractAddress>(kernel.self())
+  // );
+  const userInfo = beneficiaries.lookup(disclose(key));
+  beneficiaries.insert(disclose(key), UserInfo { rewards: (userInfo.rewards + disclose(rewardsPerBeneficiary) as Uint<128>), data: userInfo.data });
+
+}
+
+export circuit claimRewards(coin: CoinInfo, value: Uint<128>): [] {
+  const sk = localSecretKey();
+  const pk = publicKey(sk);
+  const userInfo = beneficiaries.lookup(disclose(pk));
+  const disclosedCoin = disclose(coin);
+  assert(userInfo.rewards > 0, "No rewards to claim");
+  assert((disclosedCoin.value == userInfo.rewards), "Coin amount does not match rewards");
+
+  // As the insertCoin is not working, we cant send funds to the beneficiaries.
+  // const sendResult = send(
+  //       protocolTVL.lookup(disclosedCoin.color), 
+  //       left<ZswapCoinPublicKey, ContractAddress>(ownPublicKey()),
+  //       userInfo.rewards
+  //   );
+
+  // sendResult.change.is_some ? 
+  // protocolTVL.insertCoin(disclosedCoin.color, sendResult.change.value, right<ZswapCoinPublicKey, ContractAddress>(kernel.self())) :
+  // protocolTVL.remove(disclosedCoin.color);
+
+
+  beneficiaries.insert(disclose(pk), UserInfo { rewards: 0, data: userInfo.data });
+}
+
+
+
+export circuit publicKey(sk: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "authorized-rewards:pk:"), sk]);
+}
