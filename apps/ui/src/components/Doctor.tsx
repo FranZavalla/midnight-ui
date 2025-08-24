@@ -1,6 +1,7 @@
-import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { ContractData, UserRole } from '../App';
 import { Button } from './Button';
+import { Input } from './Input';
 import { JoinInstance } from './JoinInstance';
 
 interface DoctorProps {
@@ -11,8 +12,6 @@ interface DoctorProps {
 
 export const Doctor = ({ data, setData, setRole }: DoctorProps) => {
   const [textData, setTextData] = useState<boolean>(false);
-  const [index, setIndex] = useState<number>(0);
-  const [money, setMoney] = useState<number>(0);
   const [value, setValue] = useState<string>('');
   const [clientPub, setClientPub] = useState<string>('');
 
@@ -22,59 +21,60 @@ export const Doctor = ({ data, setData, setRole }: DoctorProps) => {
     return bytes;
   };
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = () => {
     setTextData((prev) => !prev);
   };
 
   const handleUploadData = () => {
     setData((prev) => prev.set(clientPub, [0, textData]));
-    setIndex((prev) => prev + 1);
-  };
-
-  const handleMoneyChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setMoney(Number(e.target.value));
-  };
-
-  const handlePayMoney = () => {
-    setData((prev) => {
-      const newMap = new Map();
-
-      prev.forEach((elem, index) => {
-        newMap.set(index, [elem[0] + money, elem[1]]);
-      });
-
-      return newMap;
-    });
   };
 
   console.log(data);
   if (!value)
     return (
-      <>
-        <h1>DOCTOR</h1>
-        <Button onClick={() => setRole(undefined)}>BACK</Button>
-        <JoinInstance setContract={setValue} />
-      </>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-gray-50 p-4">
+        <h1 className="text-4xl font-bold text-green-600">DOCTOR</h1>
+        <div className="w-full max-w-md">
+          <JoinInstance setContract={setValue} />
+        </div>
+        <Button color="error" onClick={() => setRole(undefined)}>
+          BACK
+        </Button>
+      </div>
     );
 
   return (
-    <div>
-      <h1>DOCTOR</h1>
-      <Button onClick={() => setRole(undefined)}>BACK</Button>
-      <Button onClick={handleUploadData}>Upload data</Button>
-      <input
-        type="string"
-        placeholder="add your client's public"
-        value={clientPub}
-        onChange={(e) => setClientPub(e.target.value)}
-      />
+    <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-6 bg-gray-50">
+      <h1 className="text-4xl font-bold text-green-600">DOCTOR</h1>
+      <div>Do your thing</div>
 
-      <input type="checkbox" onChange={handleChange} checked={textData} />
-
-      <Button onClick={handlePayMoney}>Add money</Button>
-      <input type="number" placeholder="add money here" value={money} onChange={handleMoneyChange} />
-
-      {randomBytes(32)}
+      <div className="flex gap-3 justify-center items-center p-4 border rounded shadow bg-white w-auto ">
+        <div className="flex gap-3">
+          <Input
+            name="doc"
+            placeholder="Add your client's public"
+            value={clientPub}
+            onChange={(e) => setClientPub(e.target.value)}
+            className="w-full"
+          />
+          <label className="flex items-center gap-3 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={textData}
+              onChange={handleChange}
+              className="w-10 h-10 text-green-600 border-gray-300 rounded focus:ring-4 focus:ring-green-400"
+            />
+            <span className="text-gray-700 font-medium">Has condition</span>
+          </label>
+          <Button onClick={handleUploadData} className="w-20">
+            Upload
+          </Button>
+        </div>
+      </div>
+      <div className="text-sm text-gray-600 mt-2">Random Bytes: {randomBytes(32).toString()}</div>
+      <Button color="error" onClick={() => setRole(undefined)}>
+        BACK
+      </Button>
     </div>
   );
 };

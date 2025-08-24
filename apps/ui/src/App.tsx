@@ -1,15 +1,14 @@
-import { Box } from '@mui/material';
+import { DAppConnectorWalletAPI } from '@midnight-ntwrk/dapp-connector-api';
 import React, { useState } from 'react';
 import { Button } from './components/Button';
 import { ConnectWallet } from './components/ConnectWallet';
-import { CreateAlgo } from './components/CreateAlgo';
 import { Doctor } from './components/Doctor';
 import { Gov } from './components/Gov';
 import { Patient } from './components/Patient';
 
 type Money = number;
 type Condition = boolean;
-type Key = string; // esto cambiará?
+type Key = string;
 export type ContractData = Map<Key, [Money, Condition]>;
 
 const initData: ContractData = new Map<Key, [Money, Condition]>([
@@ -28,40 +27,59 @@ export enum UserRole {
 const App: React.FC = () => {
   const [role, setRole] = useState<UserRole | undefined>(undefined);
   const [data, setData] = useState<ContractData>(initData);
+  const [wallet, setWallet] = useState<DAppConnectorWalletAPI | undefined>(undefined);
+  const [hover, setHover] = useState<UserRole | undefined>(undefined);
 
   const handleGovClick = () => setRole(UserRole.GOV);
   const handleDoctorClick = () => setRole(UserRole.DOC);
   const handlePatientClick = () => setRole(UserRole.PAT);
 
-  if (role === UserRole.GOV) {
-    return (
-      <Box sx={{ background: '#fff', minHeight: '100vh' }}>
-        <Gov data={data} setData={setData} setRole={setRole} />
-      </Box>
-    );
-  } else if (role === UserRole.DOC) {
-    return (
-      <Box sx={{ background: '#fff', minHeight: '100vh' }}>
-        <Doctor data={data} setData={setData} setRole={setRole} />
-      </Box>
-    );
-  } else if (role === UserRole.PAT) {
-    return (
-      <Box sx={{ background: '#fff', minHeight: '100vh' }}>
-        <Patient data={data} setData={setData} setRole={setRole} />
-      </Box>
-    );
-  }
-
   return (
-    <Box sx={{ background: '#fff', minHeight: '100vh' }}>
-      <div className="w-5 h-5 bg-cyan-500" />
-      <ConnectWallet />
-      <Button onClick={handleGovClick}>I'm a government official</Button>
-      <Button onClick={handleDoctorClick}>I'm a doctor</Button>
-      <Button onClick={handlePatientClick}>I'm a patient</Button>
-      <CreateAlgo />
-    </Box>
+    <>
+      {role === UserRole.GOV && <Gov setData={setData} setRole={setRole} />}
+      {role === UserRole.DOC && <Doctor data={data} setData={setData} setRole={setRole} />}
+      {role === UserRole.PAT && <Patient data={data} setData={setData} setRole={setRole} />}
+      {role === undefined && (
+        <div className="h-screen text-center flex flex-col items-center justify-center gap-10">
+          <div className="flex flex-col gap-0">
+            <div className="text-5xl font-bold">Select your role</div>&nbsp;
+            {!wallet && <div className="text-2xl">or connect your wallet</div>}
+          </div>
+          <div className="flex flex-col gap-5 justify-center items-center">
+            {!wallet && <ConnectWallet setWallet={setWallet} />}
+            <div className="flex gap-3 justify-center">
+              <Button
+                className={'w-80 ' + (wallet && 'hover:text-red-700 hover:border-red-700')}
+                onClick={handleGovClick}
+                disabled={hover === UserRole.GOV && !wallet}
+                onMouseEnter={() => setHover(UserRole.GOV)}
+                onMouseLeave={() => setHover(undefined)}
+              >
+                {hover === UserRole.GOV && !wallet ? 'Connect your wallet first' : "I'm a government official"}
+              </Button>
+              <Button
+                className={'w-80 ' + (wallet && 'hover:text-green-700 hover:border-green-700')}
+                onClick={handleDoctorClick}
+                disabled={hover === UserRole.DOC && !wallet}
+                onMouseEnter={() => setHover(UserRole.DOC)}
+                onMouseLeave={() => setHover(undefined)}
+              >
+                {hover === UserRole.DOC && !wallet ? 'Connect your wallet first' : "I'm a doctor"}
+              </Button>
+              <Button
+                className={'w-80 ' + (wallet && 'hover:text-blue-700 hover:border-blue-700')}
+                onClick={handlePatientClick}
+                disabled={hover === UserRole.PAT && !wallet}
+                onMouseEnter={() => setHover(UserRole.PAT)}
+                onMouseLeave={() => setHover(undefined)}
+              >
+                {hover === UserRole.PAT && !wallet ? 'Connect your wallet first' : "I'm a patient"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
