@@ -199,41 +199,6 @@ For testing purposes:
 
 **Security Note**: Keep your secret keys secure and never share them publicly.
 
-## Development
-
-### Running Tests
-
-```bash
-# Contract tests
-cd packages/contract
-pnpm test
-
-# UI tests (if available)
-cd apps/ui
-pnpm test
-```
-
-### Linting
-
-```bash
-# Root level
-pnpm run lint
-
-# Individual packages
-cd packages/contract && pnpm run lint
-cd apps/ui && pnpm run lint
-```
-
-### Type Checking
-
-```bash
-# Root level
-pnpm run check-types
-
-# UI specific
-cd apps/ui && pnpm run typecheck
-```
-
 ## License
 
 Apache-2.0
