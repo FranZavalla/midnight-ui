@@ -2,20 +2,14 @@
 import { Counter } from 'medical-contract';
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import { DeployedMedRecordsAPI, MedRecordsAPI } from '../api';
-import { ContractData, UserRole } from '../App';
+import { UserRole } from '../App';
 import { initializeProviders } from '../contexts/BrowserDeployedMedRecordManager';
 import { Button } from './Button';
 import { CreateContract } from './CreateContract';
 import { Input } from './Input';
 import { JoinContract } from './JoinContract';
 
-export const Gov = ({
-  setData,
-  setRole,
-}: {
-  setData: Dispatch<SetStateAction<ContractData>>;
-  setRole: Dispatch<SetStateAction<UserRole | undefined>>;
-}) => {
+export const Gov = ({ setRole }: { setRole: Dispatch<SetStateAction<UserRole | undefined>> }) => {
   const [deployedMedRecordAPI, setDeployedMedRecordAPI] = useState<DeployedMedRecordsAPI>();
   const [contractHash, setContractHash] = useState<string>('');
   const [doctor, setDoctor] = useState<string>('');
@@ -23,6 +17,7 @@ export const Gov = ({
   const [patient, setPatient] = useState<string>('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [createLoading, setCreateLoading] = useState<boolean>(false);
 
   const handleMoneyChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMoney(Number(e.target.value));
@@ -57,9 +52,11 @@ export const Gov = ({
         <div className="flex gap-5 w-full justify-center">
           <div className="flex flex-col items-center justify-center gap-2 p-4 border rounded shadow bg-white w-full max-w-md">
             <CreateContract
+              setLoading={setCreateLoading}
               deployedMedRecordAPI={deployedMedRecordAPI}
               setDeployedMedRecordAPI={setDeployedMedRecordAPI}
             />
+            {createLoading && <div className="text-sm text-gray-500">Creating...</div>}
           </div>
 
           <div className="w-full max-w-md">

@@ -1,5 +1,6 @@
 'use client';
 import { DeployedMedRecordsAPI } from '@/api';
+import { DAppConnectorWalletAPI } from '@midnight-ntwrk/dapp-connector-api';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { ContractData, UserRole } from '../App';
 import { Button } from './Button';
@@ -7,19 +8,28 @@ import { Input } from './Input';
 import { JoinContract } from './JoinContract';
 
 export const Patient = ({
-  data,
-  setData,
   setRole,
+  wallet,
 }: {
-  data: ContractData;
-  setData: Dispatch<SetStateAction<ContractData>>;
   setRole: Dispatch<SetStateAction<UserRole | undefined>>;
+  wallet: DAppConnectorWalletAPI;
 }) => {
   const [value, setValue] = useState<string>('');
-  const [seeState, setSeeState] = useState<boolean>(false);
   const [contractHash, setContractHash] = useState<string>('');
   const [deployedMedRecordAPI, setDeployedMedRecordAPI] = useState<DeployedMedRecordsAPI>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [data, setData] = useState<ContractData>();
+  const [error, setError] = useState<string>('');
+
+  const handleLookup = async () => {
+    const state = await wallet.state();
+    const asd = await deployedMedRecordAPI?.lookupData(state.address);
+    if (asd) {
+      console.log(asd);
+    }
+    // setData(asd);
+    else setError('Data not found');
+  };
 
   if (!deployedMedRecordAPI?.deployedContractAddress)
     return (
@@ -70,27 +80,20 @@ export const Patient = ({
         >
           Claim
         </Button>
-        <Button
-          onClick={() => {
-            setSeeState((prev) => !prev);
-          }}
-        >
-          {!seeState ? 'See balance' : 'Hide balance'}
-        </Button>
+        <Button onClick={handleLookup}>{'See balance'}</Button>
       </div>
-      {seeState &&
-        (data.has(value) ? (
-          <div className="flex gap-2">
-            <div className="font-bold">Hash:</div>
-            {value}&nbsp;&nbsp;&nbsp;&nbsp;
-            <div className="font-bold">Amount:</div>
-            {data.get(value)?.[0]}&nbsp;&nbsp;&nbsp;&nbsp;
-            <div className="font-bold">Condition:</div>
-            {data.get(value)?.[1] ? 'True' : 'False'}
-          </div>
-        ) : (
-          <div>Hash not found</div>
-        ))}
+      {data ? (
+        <div className="flex gap-2">
+          <div className="font-bold">Hash:</div>
+          {value}&nbsp;&nbsp;&nbsp;&nbsp;
+          <div className="font-bold">Amount:</div>
+          {data.get(value)?.[0]}&nbsp;&nbsp;&nbsp;&nbsp;
+          <div className="font-bold">Condition:</div>
+          {data.get(value)?.[1] ? 'True' : 'False'}
+        </div>
+      ) : (
+        <div>Hash not found</div>
+      )}
       <Button onClick={() => setRole(undefined)}>BACK</Button>
     </div>
   );

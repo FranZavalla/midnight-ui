@@ -70,13 +70,12 @@ export class MedRecordsAPI implements DeployedMedRecordsAPI {
     console.log(`Transaction ${finalizedTxData.public.txId} added in block ${finalizedTxData.public.blockHeight}`);
   }
 
-  async lookupData(key: string) {
+  async lookupData(_: string) {
     console.log('Displaying beneficiary data...');
     const beneficiaries = await this.deployedContract.callTx.lookupData();
-    for (const [beneficiary, data] of Object.entries(beneficiaries)) {
-      console.log(`Beneficiary: ${beneficiary}, Data: ${JSON.stringify(data)}`);
-    }
-    return JSON.stringify(beneficiaries);
+    console.log(beneficiaries);
+
+    return JSON.stringify(beneficiaries, (key, value) => (typeof value === 'bigint' ? value.toString() : value));
   }
 
   async addRewards(rewardsPerBeneficiary: bigint, key: Uint8Array) {

@@ -1,30 +1,22 @@
 import { Counter } from 'medical-contract';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { DeployedMedRecordsAPI, MedRecordsAPI } from '../api';
-import { ContractData, UserRole } from '../App';
+import { UserRole } from '../App';
 import { initializeProviders } from '../contexts/BrowserDeployedMedRecordManager';
 import { Button } from './Button';
 import { Input } from './Input';
 import { JoinContract } from './JoinContract';
 
 interface DoctorProps {
-  data: ContractData;
-  setData: Dispatch<SetStateAction<ContractData>>;
   setRole: Dispatch<SetStateAction<UserRole | undefined>>;
 }
 
-export const Doctor = ({ setData, setRole }: DoctorProps) => {
+export const Doctor = ({ setRole }: DoctorProps) => {
   const [deployedMedRecordAPI, setDeployedMedRecordAPI] = useState<DeployedMedRecordsAPI>();
   const [condition, setCondition] = useState<boolean>(false);
   const [clientPub, setClientPub] = useState<string>('');
   const [contractHash, setContractHash] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
-
-  const randomBytes = (length: number): Uint8Array => {
-    const bytes = new Uint8Array(length);
-    crypto.getRandomValues(bytes);
-    return bytes;
-  };
 
   const handleChange = () => {
     setCondition((prev) => !prev);
