@@ -1,6 +1,8 @@
-import { DeployedMedRecordsAPI } from '@/api';
+import { Counter } from 'medical-contract';
 import { Dispatch, SetStateAction, useState } from 'react';
+import { DeployedMedRecordsAPI, MedRecordsAPI } from '../api';
 import { ContractData, UserRole } from '../App';
+import { initializeProviders } from '../contexts/BrowserDeployedMedRecordManager';
 import { Button } from './Button';
 import { Input } from './Input';
 import { JoinContract } from './JoinContract';
@@ -13,7 +15,7 @@ interface DoctorProps {
 
 export const Doctor = ({ setData, setRole }: DoctorProps) => {
   const [deployedMedRecordAPI, setDeployedMedRecordAPI] = useState<DeployedMedRecordsAPI>();
-  const [textData, setTextData] = useState<boolean>(false);
+  const [condition, setCondition] = useState<boolean>(false);
   const [clientPub, setClientPub] = useState<string>('');
   const [contractHash, setContractHash] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -25,11 +27,18 @@ export const Doctor = ({ setData, setRole }: DoctorProps) => {
   };
 
   const handleChange = () => {
-    setTextData((prev) => !prev);
+    setCondition((prev) => !prev);
   };
 
-  const handleUploadData = () => {
-    setData((prev) => prev.set(clientPub, [0, textData]));
+  const handleUploadData = async () => {
+    if (!deployedMedRecordAPI) {
+      console.log('NO API');
+      return;
+    }
+
+    const providers = await initializeProviders();
+    const privState = await MedRecordsAPI.getPrivateState(providers);
+    deployedMedRecordAPI.addBeneficiary(Counter.pureCircuits.publicKey(privState.secretKey), condition);
   };
 
   if (!deployedMedRecordAPI?.deployedContractAddress)
@@ -77,7 +86,7 @@ export const Doctor = ({ setData, setRole }: DoctorProps) => {
           <label className="flex items-center gap-3 cursor-pointer select-none">
             <input
               type="checkbox"
-              checked={textData}
+              checked={condition}
               onChange={handleChange}
               className="w-10 h-10 text-green-600 border-gray-300 rounded focus:ring-4 focus:ring-green-400"
             />
@@ -88,7 +97,6 @@ export const Doctor = ({ setData, setRole }: DoctorProps) => {
           </Button>
         </div>
       </div>
-      <div className="text-sm text-gray-600 mt-2">Random Bytes: {randomBytes(32).toString()}</div>
       <Button color="error" onClick={() => setRole(undefined)}>
         BACK
       </Button>

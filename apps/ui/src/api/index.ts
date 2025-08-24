@@ -132,7 +132,7 @@ export class MedRecordsAPI implements DeployedMedRecordsAPI {
     return new MedRecordsAPI(deployedMedRecordContract, providers);
   }
 
-  private static async getPrivateState(providers: MedRecordProviders): Promise<CounterPrivateState> {
+  static async getPrivateState(providers: MedRecordProviders): Promise<CounterPrivateState> {
     const existingPrivateState = await providers.privateStateProvider.get(medRecordPrivateStateKey);
     return existingPrivateState ?? { secretKey: randomBytes(32) };
   }
