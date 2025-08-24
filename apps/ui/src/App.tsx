@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Box } from '@mui/material';
 import React, { useState } from 'react';
 import { Button } from './components/Button';
 import { ConnectWallet } from './components/ConnectWallet';
@@ -57,34 +56,23 @@ const App: React.FC = () => {
   const handleDoctorClick = () => setRole(UserRole.DOC);
   const handlePatientClick = () => setRole(UserRole.PAT);
 
-  if (role === UserRole.GOV) {
-    return (
-      <Box sx={{ background: '#fff', minHeight: '100vh' }}>
-        <Gov data={data} setData={setData} setRole={setRole} />
-      </Box>
-    );
-  } else if (role === UserRole.DOC) {
-    return (
-      <Box sx={{ background: '#fff', minHeight: '100vh' }}>
-        <Doctor data={data} setData={setData} setRole={setRole} />
-      </Box>
-    );
-  } else if (role === UserRole.PAT) {
-    return (
-      <Box sx={{ background: '#fff', minHeight: '100vh' }}>
-        <Patient data={data} setData={setData} setRole={setRole} />
-      </Box>
-    );
-  }
-
   return (
-    <Box sx={{ background: '#fff', minHeight: '100vh' }}>
-      <div className="w-5 h-5 bg-cyan-500" />
-      <ConnectWallet />
-      <Button onClick={handleGovClick}>I'm a government official</Button>
-      <Button onClick={handleDoctorClick}>I'm a doctor</Button>
-      <Button onClick={handlePatientClick}>I'm a patient</Button>
-    </Box>
+    <>
+      {role === UserRole.GOV && <Gov data={data} setData={setData} setRole={setRole} />}
+      {role === UserRole.DOC && <Doctor data={data} setData={setData} setRole={setRole} />}
+      {role === UserRole.PAT && <Patient data={data} setData={setData} setRole={setRole} />}
+      {role === undefined && (
+        <div className="h-screen text-center flex flex-col items-center justify-center gap-10">
+          <div className="text-5xl font-bold">Select your role</div>
+          <div className="flex gap-3 justify-center">
+            <ConnectWallet />
+            <Button onClick={handleGovClick}>I&apos;m a government official</Button>
+            <Button onClick={handleDoctorClick}>I&apos;m a doctor</Button>
+            <Button onClick={handlePatientClick}>I&apos;m a patient</Button>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

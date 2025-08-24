@@ -20,53 +20,58 @@ export const Patient = ({
 
   if (!contract)
     return (
-      <>
-        <h1>PATIENT</h1>
-        <Button onClick={() => setRole(undefined)}>BACK</Button>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-gray-50 p-4">
+        <h1 className="text-4xl font-bold text-green-600">PATIENT</h1>
         <JoinInstance setContract={setContract} />
-      </>
+        <Button onClick={() => setRole(undefined)}>BACK</Button>
+      </div>
     );
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center">
-      <h1>PATIENT</h1>
-      <Button onClick={() => setRole(undefined)}>BACK</Button>
+    <div className="min-h-screen flex flex-col w-full items-center justify-center gap-4 p-6 bg-gray-50">
+      <h1 className="text-4xl font-bold text-green-600">PATIENT</h1>
       <div>Do your thing</div>
-      <Input
-        placeholder="Enter your hash"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        name="hash"
-        className="mb-4 mt-4"
-      />
-      <Button
-        onClick={() => {
-          setData((prev) => {
-            const newData = new Map(prev);
-            newData.set(value, [0, true]);
-            return newData;
-          });
-        }}
-      >
-        Claim
-      </Button>
-      <Button
-        onClick={() => {
-          setSeeState((prev) => !prev);
-        }}
-      >
-        {!seeState ? 'See balance' : 'Hide balance'}
-      </Button>
+      <div className="flex items-center gap-2 p-4 border rounded shadow bg-white w-auto">
+        <Input
+          placeholder="Enter your hash"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          name="hash"
+          className="mb-4 mt-4"
+        />
+        <Button
+          onClick={() => {
+            setData((prev) => {
+              const newData = new Map(prev);
+              newData.set(value, [0, true]);
+              return newData;
+            });
+          }}
+        >
+          Claim
+        </Button>
+        <Button
+          onClick={() => {
+            setSeeState((prev) => !prev);
+          }}
+        >
+          {!seeState ? 'See balance' : 'Hide balance'}
+        </Button>
+      </div>
       {seeState &&
         (data.has(value) ? (
-          <div>
-            <div>Hash: {value}</div>
-            <div>Amount: {data.get(value)?.[0]}</div>
-            <div>Condition: {data.get(value)?.[1] ? 'True' : 'False'}</div>
+          <div className="flex gap-2">
+            <div className="font-bold">Hash:</div>
+            {value}&nbsp;&nbsp;&nbsp;&nbsp;
+            <div className="font-bold">Amount:</div>
+            {data.get(value)?.[0]}&nbsp;&nbsp;&nbsp;&nbsp;
+            <div className="font-bold">Condition:</div>
+            {data.get(value)?.[1] ? 'True' : 'False'}
           </div>
         ) : (
           <div>Hash not found</div>
         ))}
+      <Button onClick={() => setRole(undefined)}>BACK</Button>
     </div>
   );
 };

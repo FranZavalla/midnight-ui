@@ -17,8 +17,8 @@ export function Button({
       onClick={onClickFn}
       type={type}
       disabled={disabled}
-      className={`h-10 inline-flex w-full select-none items-center justify-center border border-white cursor-pointer
-        rounded-lg rounded-b-xl px-5 py-2 text-center text-lg font-semibold tracking-wide sm:w-auto ${customClassName} 
+      className={`h-10 text-xl inline-flex w-full select-none items-center justify-center border border-black cursor-pointer
+        rounded-lg rounded-b-xl px-5 py-2 text-center font-semibold tracking-wide sm:w-auto ${customClassName}
         disabled:cursor-not-allowed disabled:bg-gray-400 disabled:hover:text-black`}
     >
       {children}

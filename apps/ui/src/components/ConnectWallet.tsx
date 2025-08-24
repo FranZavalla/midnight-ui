@@ -7,7 +7,8 @@ export const ConnectWallet = () => {
     <Button
       onClick={async () => {
         try {
-          const midnight = window.midnight!;
+          const midnight = window.midnight;
+          if (!midnight) throw new Error('Midnight not found');
           const wallet: DAppConnectorWalletAPI = await midnight?.mnLace?.enable();
           console.log(await midnight.mnLace.isEnabled());
           console.log(wallet.state());

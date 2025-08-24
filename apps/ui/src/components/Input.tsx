@@ -4,7 +4,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
   className?: string;
   label?: string;
-  value: string;
+  value: string | number;
 }
 
 export function Input({ name, id, type, value, onChange, placeholder, className: customClassName }: InputProps) {
@@ -16,7 +16,7 @@ export function Input({ name, id, type, value, onChange, placeholder, className:
       value={value}
       onChange={onChange}
       placeholder={placeholder}
-      className={`block appearance-none rounded-lg rounded-b-xl border-2 border-b-8 border-black bg-white text-lg text-black placeholder-gray-400 shadow shadow-black outline-none ${customClassName}`}
+      className={`block appearance-none rounded-lg p-2 border border-black bg-white text-lg text-black placeholder-gray-400 ${customClassName}`}
     />
   );
 }
