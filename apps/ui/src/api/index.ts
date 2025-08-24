@@ -1,8 +1,10 @@
 import { type ContractAddress } from '@midnight-ntwrk/compact-runtime';
+import { deployContract, findDeployedContract } from '@midnight-ntwrk/midnight-js-contracts';
 import { Counter, CounterPrivateState, witnesses } from 'medical-contract';
 import { type Logger } from 'pino';
 import { combineLatest, from, map, type Observable } from 'rxjs';
 import {
+  CounterContract,
   CounterDerivedState,
   counterPrivateStateKey,
   CounterProviders,
@@ -11,7 +13,7 @@ import {
 } from './common-types.js';
 
 /** @internal */
-const medicalContractInstance = new Counter.Contract(witnesses);
+const medicalContractInstance: CounterContract = new Counter.Contract(witnesses);
 
 /**
  * An API for a deployed bulletin board.
@@ -75,15 +77,8 @@ export class CounterAPI implements DeployedCounterAPI {
     );
   }
 
-  /**
-   * Gets the address of the current deployed contract.
-   */
   readonly deployedContractAddress: ContractAddress;
 
-  /**
-   * Gets an observable stream of state changes based on the current public (ledger),
-   * and private state data.
-   */
   readonly state$: Observable<CounterDerivedState>;
 
   async increment() {
@@ -93,7 +88,6 @@ export class CounterAPI implements DeployedCounterAPI {
     const txData = await this.deployedContract.callTx.increment2();
   }
   async addBeneficiary(publicKey: Uint8Array, condition: boolean) {
-    // Counter.pureCircuits.publicKey(publicKey);
     const txData = await this.deployedContract.callTx.addBeneficiary(publicKey, condition);
   }
   async lookupData(key: string): Promise<string | undefined> {
@@ -101,81 +95,31 @@ export class CounterAPI implements DeployedCounterAPI {
   }
   async grantVerifier(address: string) {}
 
-  /**
-   * Attempts to post a given message to the bulletin board.
-   *
-   * @param message The message to post.
-   *
-   * @remarks
-   * This method can fail during local circuit execution if the bulletin board is currently occupied.
-   */
-  // async post(message: string): Promise<void> {
-  //   this.logger?.info(`postingMessage: ${message}`);
+  static async deploy(providers: CounterProviders): Promise<CounterAPI> {
+    const deployecCounterContract = await deployContract<typeof medicalContractInstance>(providers as any, {
+      privateStateId: counterPrivateStateKey,
+      contract: medicalContractInstance,
+      initialPrivateState: await CounterAPI.getPrivateState(providers),
+    });
 
-  //   const txData = await this.deployedContract.callTx.post(message);
+    return new CounterAPI(deployecCounterContract, providers);
+  }
 
-  //   this.logger?.trace({
-  //     transactionAdded: {
-  //       circuit: 'post',
-  //       txHash: txData.public.txHash,
-  //       blockHeight: txData.public.blockHeight,
-  //     },
-  //   });
-  // }
+  static async join(providers: CounterProviders, address: ContractAddress): Promise<CounterAPI> {
+    const deployedCounterContract = await findDeployedContract<CounterContract>(providers, {
+      contractAddress: address,
+      contract: medicalContractInstance,
+      privateStateId: counterPrivateStateKey,
+      initialPrivateState: await CounterAPI.getPrivateState(providers),
+    });
 
-  /**
-   * Attempts to take down any currently posted message on the bulletin board.
-   *
-   * @remarks
-   * This method can fail during local circuit execution if the bulletin board is currently vacant,
-   * or if the currently posted message isn't owned by the owner computed from the current private
-   * state.
-   */
-  // async takeDown(): Promise<void> {
-  //   this.logger?.info('takingDownMessage');
+    return new CounterAPI(deployedCounterContract, providers);
+  }
 
-  //   const txData = await this.deployedContract.callTx.takeDown();
-
-  //   this.logger?.trace({
-  //     transactionAdded: {
-  //       circuit: 'takeDown',
-  //       txHash: txData.public.txHash,
-  //       blockHeight: txData.public.blockHeight,
-  //     },
-  //   });
-  // }
-
-  /**
-   * Deploys a new bulletin board contract to the network.
-   *
-   * @param providers The bulletin board providers.
-   * @param logger An optional 'pino' logger to use for logging.
-   * @returns A `Promise` that resolves with a {@link CounterAPI} instance that manages the newly deployed
-   * {@link DeployedBBoardContract}; or rejects with a deployment error.
-   */
-  // static async deploy(providers: CounterProviders, logger?: Logger): Promise<CounterAPI> {
-  //   logger?.info('deployContract');
-
-  //   // EXERCISE 5: FILL IN THE CORRECT ARGUMENTS TO deployContract
-  //   const deployedBBoardContract = await deployContract<typeof bboardContractInstance>(providers, {
-  //     privateStateId: bboardPrivateStateKey,
-  //     contract: bboardContractInstance,
-  //     initialPrivateState: await CounterAPI.getPrivateState(providers),
-  //   });
-
-  //   logger?.trace({
-  //     contractDeployed: {
-  //       finalizedDeployTxData: deployedBBoardContract.deployTxData.public,
-  //     },
-  //   });
-
-  //   return new CounterAPI(deployedBBoardContract, providers, logger);
-  // }
-
-  // private static async getPrivateState(providers: BBoardProviders): Promise<BBoardPrivateState> {
-  //   const existingPrivateState = await providers.privateStateProvider.get(bboardPrivateStateKey);
-  //   return existingPrivateState ?? createBBoardPrivateState(utils.randomBytes(32));
-  // }
+  private static async getPrivateState(providers: CounterProviders): Promise<CounterPrivateState> {
+    const existingPrivateState = await providers.privateStateProvider.get(counterPrivateStateKey);
+    return existingPrivateState!;
+  }
 }
 
 /**

@@ -22,7 +22,7 @@
 import { type FoundContract } from '@midnight-ntwrk/midnight-js-contracts';
 import { type MidnightProviders } from '@midnight-ntwrk/midnight-js-types';
 import type { CounterPrivateState } from 'medical-contract';
-import { Contract, Witnesses } from 'medical-contract/dist/managed/counter/contract/index.cjs';
+import { Counter } from 'medical-contract';
 
 export const counterPrivateStateKey = 'counterPrivateState';
 export type PrivateStateId = typeof counterPrivateStateKey;
@@ -52,7 +52,7 @@ export type PrivateStates = {
  *
  * @public
  */
-export type CounterContract = Contract<CounterPrivateState, Witnesses<CounterPrivateState>>;
+export type CounterContract = Counter.Contract<CounterPrivateState, Counter.Witnesses<CounterPrivateState>>;
 
 /**
  * The keys of the circuits exported from {@link BBoardContract}.
@@ -73,7 +73,7 @@ export type CounterProviders = MidnightProviders<CounterCircuitKeys, PrivateStat
  *
  * @public
  */
-export type DeployedCounterContract = FoundContract<CounterProviders & Contract<any, Witnesses<any>>>;
+export type DeployedCounterContract = FoundContract<CounterProviders & Counter.Contract<any, Counter.Witnesses<any>>>;
 
 export type UserInfo = {
   rewards: bigint;

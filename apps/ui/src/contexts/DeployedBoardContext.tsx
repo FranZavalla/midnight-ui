@@ -13,14 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, { type PropsWithChildren, createContext } from 'react';
-import { type DeployedBoardAPIProvider, BrowserDeployedBoardManager } from './BrowserDeployedBoardManager';
 import { type Logger } from 'pino';
+import React, { type PropsWithChildren, createContext } from 'react';
+import { type DeployedContractAPIProvider, BrowserDeployedBoardManager } from './BrowserDeployedBoardManager';
 
 /**
  * Encapsulates a deployed boards provider as a context object.
  */
-export const DeployedBoardContext = createContext<DeployedBoardAPIProvider | undefined>(undefined);
+export const DeployedBoardContext = createContext<DeployedContractAPIProvider | undefined>(undefined);
 
 /**
  * The props required by the {@link DeployedBoardProvider} component.

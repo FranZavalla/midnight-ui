@@ -42,11 +42,6 @@ logger.trace(`networkId = ${networkId}`);
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    {/* <CssBaseline /> */}
-    {/* <ThemeProvider theme={theme}> */}
-    {/* <DeployedBoardProvider logger={logger}> */}
     <App />
-    {/* </DeployedBoardProvider> */}
-    {/* </ThemeProvider> */}
   </React.StrictMode>,
 );

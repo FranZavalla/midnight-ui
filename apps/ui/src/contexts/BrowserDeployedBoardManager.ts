@@ -50,6 +50,7 @@ import {
 } from '@midnight-ntwrk/midnight-js-types';
 import { Transaction as ZswapTransaction } from '@midnight-ntwrk/zswap';
 import semver from 'semver';
+import { CounterAPI, CounterCircuitKeys, CounterProviders, DeployedCounterAPI } from '../api';
 
 /**
  * An in-progress bulletin board deployment.
@@ -89,7 +90,7 @@ export type BoardDeployment = InProgressBoardDeployment | DeployedBoardDeploymen
 /**
  * Provides access to bulletin board deployments.
  */
-export interface DeployedBoardAPIProvider {
+export interface DeployedContractAPIProvider {
   /**
    * Gets the observable set of board deployments.
    *
@@ -114,15 +115,15 @@ export interface DeployedBoardAPIProvider {
 }
 
 /**
- * A {@link DeployedBoardAPIProvider} that manages bulletin board deployments in a browser setting.
+ * A {@link DeployedContractAPIProvider} that manages bulletin board deployments in a browser setting.
  *
  * @remarks
  * {@link BrowserDeployedBoardManager} configures and manages a connection to the Midnight Lace
  * wallet, along with a collection of additional providers that work in a web-browser setting.
  */
-export class BrowserDeployedBoardManager implements DeployedBoardAPIProvider {
+export class BrowserDeployedBoardManager implements DeployedContractAPIProvider {
   readonly #boardDeploymentsSubject: BehaviorSubject<Array<BehaviorSubject<BoardDeployment>>>;
-  #initializedProviders: Promise<BBoardProviders> | undefined;
+  #initializedProviders: Promise<CounterProviders> | undefined;
 
   /**
    * Initializes a new {@link BrowserDeployedBoardManager} instance.
@@ -164,7 +165,7 @@ export class BrowserDeployedBoardManager implements DeployedBoardAPIProvider {
     return deployment;
   }
 
-  private getProviders(): Promise<BBoardProviders> {
+  private getProviders(): Promise<CounterProviders> {
     // We use a cached `Promise` to hold the providers. This will:
     //
     // 1. Cache and re-use the providers (including the configured connector API), and
@@ -177,7 +178,7 @@ export class BrowserDeployedBoardManager implements DeployedBoardAPIProvider {
   private async deployDeployment(deployment: BehaviorSubject<BoardDeployment>): Promise<void> {
     try {
       const providers = await this.getProviders();
-      const api = await BBoardAPI.deploy(providers, this.logger);
+      const api = await CounterAPI.deploy(providers);
 
       deployment.next({
         status: 'deployed',
@@ -197,7 +198,7 @@ export class BrowserDeployedBoardManager implements DeployedBoardAPIProvider {
   ): Promise<void> {
     try {
       const providers = await this.getProviders();
-      const api = await BBoardAPI.join(providers, contractAddress, this.logger);
+      const api = await CounterAPI.join(providers, contractAddress);
 
       deployment.next({
         status: 'deployed',
@@ -213,7 +214,7 @@ export class BrowserDeployedBoardManager implements DeployedBoardAPIProvider {
 }
 
 /** @internal */
-const initializeProviders = async (logger: Logger): Promise<BBoardProviders> => {
+const initializeProviders = async (logger: Logger): Promise<CounterProviders> => {
   const { wallet, uris } = await connectToWallet(logger);
   const walletState = await wallet.state();
   const zkConfigPath = window.location.origin; // '../../../contract/src/managed/bboard';
@@ -224,7 +225,7 @@ const initializeProviders = async (logger: Logger): Promise<BBoardProviders> => 
     privateStateProvider: levelPrivateStateProvider({
       privateStateStoreName: 'bboard-private-state',
     }),
-    zkConfigProvider: new FetchZkConfigProvider<BBoardCircuitKeys>(zkConfigPath, fetch.bind(window)),
+    zkConfigProvider: new FetchZkConfigProvider<CounterCircuitKeys>(zkConfigPath, fetch.bind(window)),
     proofProvider: httpClientProofProvider(uris.proverServerUri),
     publicDataProvider: indexerPublicDataProvider(uris.indexerUri, uris.indexerWsUri),
     walletProvider: {
