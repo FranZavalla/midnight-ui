@@ -13,12 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import React, { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
-import { MainLayout, Board } from './components';
-import { useDeployedBoardContext } from './hooks';
-import { type BoardDeployment } from './contexts';
-import { type Observable } from 'rxjs';
+import React, { useState } from 'react';
+import { Button } from './components/Button';
+import { ConnectWallet } from './components/ConnectWallet';
 
 /**
  * The root bulletin board application component.
@@ -30,29 +28,47 @@ import { type Observable } from 'rxjs';
  * @internal
  */
 const App: React.FC = () => {
-  const boardApiProvider = useDeployedBoardContext();
-  const [boardDeployments, setBoardDeployments] = useState<Array<Observable<BoardDeployment>>>([]);
+  const [isDoctor, setIsDoctor] = useState<boolean | undefined>(undefined);
+  // const boardApiProvider = useDeployedBoardContext();
+  // const [boardDeployments, setBoardDeployments] = useState<Array<Observable<BoardDeployment>>>([]);
 
-  useEffect(() => {
-    const subscription = boardApiProvider.boardDeployments$.subscribe(setBoardDeployments);
+  // useEffect(() => {
+  //   const subscription = boardApiProvider.boardDeployments$.subscribe(setBoardDeployments);
 
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [boardApiProvider]);
+  //   return () => {
+  //     subscription.unsubscribe();
+  //   };
+  // }, [boardApiProvider]);
+
+  const handleDoctorClick = () => {
+    setIsDoctor(true);
+  };
+
+  const handlePatientClick = () => {
+    setIsDoctor(false);
+  };
+
+  if (isDoctor) {
+    return <div>DOGTOR!</div>;
+  } else if (isDoctor === false) {
+    return <div>NO DOGTOR</div>;
+  }
 
   return (
-    <Box sx={{ background: '#000', minHeight: '100vh' }}>
-      <MainLayout>
-        {boardDeployments.map((boardDeployment, idx) => (
+    <Box sx={{ background: '#fff', minHeight: '100vh' }}>
+      {/* <MainLayout> */}
+      <ConnectWallet />
+      <Button onClick={handleDoctorClick}>I'm a doctor</Button>
+      <Button onClick={handlePatientClick}>I'm a patient</Button>
+      {/* {boardDeployments.map((boardDeployment, idx) => (
           <div data-testid={`board-${idx}`} key={`board-${idx}`}>
             <Board boardDeployment$={boardDeployment} />
           </div>
         ))}
         <div data-testid="board-start">
           <Board />
-        </div>
-      </MainLayout>
+        </div> */}
+      {/* </MainLayout> */}
     </Box>
   );
 };

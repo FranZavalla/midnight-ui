@@ -23,6 +23,7 @@
     "@midnight-ntwrk/midnight-js-network-id": "^2.0.2",
     "@midnight-ntwrk/midnight-js-types": "^2.0.2",
     "@midnight-ntwrk/onchain-runtime": "^0.3.0",
+    "@midnight-ntwrk/wallet-sdk-address-format": "^2.0.0",
     "@midnight-ntwrk/zswap": "^4.0.0",
     "@mui/icons-material": "^7.1.1",
     "@mui/material": "^7.1.1",
