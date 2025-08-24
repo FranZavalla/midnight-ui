@@ -392,7 +392,7 @@ export const buildWalletAndWaitForFunds = async (
   }
   logger.info(`Your wallet balance is: ${balance}`);
   const stateA = await Rx.firstValueFrom(wallet.state());
-  console.log(stateA.coinPublicKeyLegacy);
+  console.log(`Your coin public key (legacy) is, this should be used for verifiers: ${stateA.coinPublicKeyLegacy}`);
   return wallet;
 };
 
