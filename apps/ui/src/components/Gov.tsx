@@ -15,6 +15,8 @@ export const Gov = ({
   const [value, setValue] = useState<string>('');
   const [doctor, setDoctor] = useState<string>('');
   const [money, setMoney] = useState<number>(0);
+  const [patient, setPatient] = useState<string>('');
+  const [error, setError] = useState('');
 
   const handleMoneyChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMoney(Number(e.target.value));
@@ -22,13 +24,19 @@ export const Gov = ({
 
   const handlePayMoney = () => {
     setData((prev) => {
-      const newMap = new Map();
+      const newData = new Map(prev);
+      if (newData.has(patient)) {
+        if (!money) {
+          setError('Please enter a valid amount');
+        } else {
+          const [currentMoney, currentCondition] = newData.get(patient)!;
+          newData.set(patient, [currentMoney + money, currentCondition]);
+        }
+      } else {
+        setError('Patient does not exist');
+      }
 
-      prev.forEach((elem, index) => {
-        newMap.set(index, [elem[0] + money, elem[1]]);
-      });
-
-      return newMap;
+      return newData;
     });
   };
   if (!value) {
@@ -59,7 +67,7 @@ export const Gov = ({
       <div className="flex gap-5">
         <div className="flex flex-col items-center gap-2 p-4 border rounded shadow bg-white w-auto">
           <Input
-            name="gov"
+            name="gov-doc"
             placeholder="Enter your new doctor"
             value={doctor}
             onChange={(e) => setDoctor(e.target.value)}
@@ -69,12 +77,21 @@ export const Gov = ({
         </div>
         <div className="flex flex-col items-center gap-2 p-4 border rounded shadow bg-white w-auto">
           <Input
+            name="gov-pat"
+            placeholder="Enter a patient to pay"
+            value={patient}
+            onChange={(e) => setPatient(e.target.value)}
+            className="mb-2"
+            error={!patient ? error : ''}
+          />
+          <Input
             name="doc money"
             type="number"
             placeholder="Add money here"
             value={money}
             onChange={handleMoneyChange}
             className="mb-2"
+            error={!money ? error : ''}
           />
           <Button color="secondary" onClick={handlePayMoney}>
             Add money

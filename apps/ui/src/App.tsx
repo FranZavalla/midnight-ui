@@ -72,26 +72,23 @@ const App: React.FC = () => {
             <Button
               className={wallet && 'hover:text-red-700 hover:border-red-700'}
               onClick={handleGovClick}
-              onMouseEnter={() => setHover(true)}
-              onMouseLeave={() => setHover(false)}
+              disabled={!wallet}
             >
-              {!hover ? "I'm a government official" : 'Connect wallet first'}
+              {wallet ? "I'm a government official" : 'Connect wallet first'}
             </Button>
             <Button
               className={wallet && 'hover:text-green-700 hover:border-green-700'}
               onClick={handleDoctorClick}
-              onMouseEnter={() => setHover(true)}
-              onMouseLeave={() => setHover(false)}
+              disabled={!wallet}
             >
-              {!hover ? "I'm a doctor" : 'Connect wallet first'}
+              {wallet ? "I'm a doctor" : 'Connect wallet first'}
             </Button>
             <Button
               className={wallet && 'hover:text-blue-700 hover:border-blue-700'}
               onClick={handlePatientClick}
-              onMouseEnter={() => setHover(true)}
-              onMouseLeave={() => setHover(false)}
+              disabled={!wallet}
             >
-              {!hover ? "I'm a patient" : 'Connect wallet first'}
+              {wallet ? "I'm a patient" : 'Connect wallet first'}
             </Button>
           </div>
         </div>
